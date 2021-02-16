@@ -1,29 +1,12 @@
-# Python project template
+# Cloud Jeopardy!
 
-[![Latest Tag](https://img.shields.io/github/v/tag/dylanhogg/python-project-template)](https://github.com/dylanhogg/python-project-template/tags)
-[![Build](https://github.com/dylanhogg/python-project-template/workflows/build/badge.svg)](https://github.com/dylanhogg/python-project-template/actions)
-
-A quick start Python project template with some common functionality and libraries.
-
-_Currently a WIP_
-
-Type `make` for a list of commands.
-
-Utilises these application libraries:  
-
-1) https://github.com/theskumar/python-dotenv  
-1) https://github.com/pallets/click  
-1) https://github.com/sphinx-doc/sphinx  
-1) https://github.com/tiangolo/typer  
-1) https://github.com/tqdm/tqdm  
-1) https://github.com/Delgan/loguru    
+[![Latest Tag](https://img.shields.io/github/v/tag/dylanhogg/drh-cloud-jeopardy)](https://github.com/dylanhogg/drh-cloud-jeopardy/tags)
+[![Build](https://github.com/dylanhogg/drh-cloud-jeopardy/workflows/build/badge.svg)](https://github.com/dylanhogg/drh-cloud-jeopardy/actions)
 
 
-Utilises these development libraries:  
+[Jeopardy!](https://en.wikipedia.org/wiki/Jeopardy!) is an American television game show created by Merv Griffin. 
+The show features a quiz competition in which contestants are presented with general knowledge clues in the form of answers, 
+and must phrase their responses in the form of questions.
 
-1) https://github.com/pytest-dev/pytest    
-1) https://github.com/psf/black  
-1) https://gitlab.com/pycqa/flake8  
-
-
-Also has [Jupyter Lab](https://github.com/jupyterlab/jupyterlab) integration.
+[CloudJeopardy!](https://github.com/dylanhogg/drh-cloud-jeopardy) is an app created by Dylan Hogg in which users are 
+presented with as AWS cloud FAQ answer and must choose the correct corresponding FAQ question.

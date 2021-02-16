@@ -4,3 +4,4 @@ sphinx
 typer
 tqdm
 loguru
+rich
