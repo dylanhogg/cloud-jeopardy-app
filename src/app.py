@@ -19,13 +19,9 @@ def get_answer(qnas, idx):
 
 
 def randomise_questions(qns, correct_idx=0):
-    new_correct_idx = random.randrange(0, len(qns))
-
-    rnd_qns = random.sample(qns, len(qns))
-    temp = rnd_qns[new_correct_idx]
-    rnd_qns[new_correct_idx] = qns[correct_idx]
-    rnd_qns[correct_idx] = temp
-
+    rnd_qns = list(qns)
+    random.shuffle(rnd_qns)
+    new_correct_idx = rnd_qns.index(qns[correct_idx])
     return rnd_qns, new_correct_idx
 
 
@@ -38,16 +34,16 @@ def main(required_arg: str, optional_arg: str = None) -> None:
     qnas = faq.get_data()
 
     count = len(qnas)
-    correct_inx = random.randrange(0, count)
-    false1_inx = random.randrange(0, count)
-    false2_inx = random.randrange(0, count)
+    correct_qn_inx = random.randrange(0, count)
+    false_qn1_inx = random.randrange(0, count)
+    false_qn2_inx = random.randrange(0, count)
 
-    correct_ans = get_answer(qnas, correct_inx)
+    correct_ans = get_answer(qnas, correct_qn_inx)
 
     questions = [
-        get_question(qnas, correct_inx),
-        get_question(qnas, false1_inx),
-        get_question(qnas, false2_inx)
+        get_question(qnas, correct_qn_inx),
+        get_question(qnas, false_qn1_inx),
+        get_question(qnas, false_qn2_inx)
     ]
 
     rnd_questions, correct_idx = randomise_questions(questions)
@@ -56,10 +52,11 @@ def main(required_arg: str, optional_arg: str = None) -> None:
     if debug:
         for qna in qnas:
             print(qna)
-        print(f"\nAnswer: {correct_ans}")
+        print(f"\nAnswer: {correct_ans}\n")
         print(f"Correct Qn: {questions[0]}")
         print(f"False Qn 1: {questions[1]}")
         print(f"False Qn 2: {questions[2]}\n")
+        print(f"Old correct index: 0; New correct index: {correct_idx}")
 
     table = Table(show_header=True, header_style="bold blue")
     table.add_column("Answer", width=60)
