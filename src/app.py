@@ -1,7 +1,5 @@
 import typer
 import random
-from tqdm import tqdm
-from time import sleep
 from loguru import logger
 from library import env, log
 from rich.console import Console
@@ -10,65 +8,67 @@ from rich.table import Table
 from engine import faq
 
 
+def get_question(qnas, idx):
+    qn = qnas[idx][0]
+    qn = qn.replace("Q: ", "")
+    return qn
+
+
+def get_answer(qnas, idx):
+    return "\n".join(qnas[idx][1])
+
+
+def randomise_questions(qns, correct_idx=0):
+    new_correct_idx = random.randrange(0, len(qns))
+
+    rnd_qns = random.sample(qns, len(qns))
+    temp = rnd_qns[new_correct_idx]
+    rnd_qns[new_correct_idx] = qns[correct_idx]
+    rnd_qns[correct_idx] = temp
+
+    return rnd_qns, new_correct_idx
+
+
 def main(required_arg: str, optional_arg: str = None) -> None:
     logger.info(f"Hello! required_arg = {required_arg}, optional_arg = {optional_arg}")
     logger.info(f"PYTHONPATH = {env.get('PYTHONPATH', 'Not set')}")
     logger.info(f"LOG_STDERR_LEVEL = {env.get('LOG_STDERR_LEVEL', 'Not set. Copy `.env_template` to `.env`')}")
     logger.info(f"LOG_FILE_LEVEL = {env.get('LOG_FILE_LEVEL', 'Not set. Copy `.env_template` to `.env`')}")
 
-    # for i in tqdm(range(5)):
-    #     sleep(0.1)
-
     qnas = faq.get_data()
-    # for qna in qnas:
-    #     logger.info(qna)
 
     count = len(qnas)
     correct_inx = random.randrange(0, count)
     false1_inx = random.randrange(0, count)
     false2_inx = random.randrange(0, count)
 
-    correct_ans = qnas[correct_inx][1][0]
+    correct_ans = get_answer(qnas, correct_inx)
 
-    correct_qn = qnas[correct_inx][0]
-    false1_qn = qnas[false1_inx][0]
-    false2_qn = qnas[false2_inx][0]
+    questions = [
+        get_question(qnas, correct_inx),
+        get_question(qnas, false1_inx),
+        get_question(qnas, false2_inx)
+    ]
 
-    print("Answer:")
-    print(correct_ans)
+    rnd_questions, correct_idx = randomise_questions(questions)
 
-    print("Question 1:")
-    print(false1_qn)
+    debug = True
+    if debug:
+        for qna in qnas:
+            print(qna)
+        print(f"\nAnswer: {correct_ans}")
+        print(f"Correct Qn: {questions[0]}")
+        print(f"False Qn 1: {questions[1]}")
+        print(f"False Qn 2: {questions[2]}\n")
 
-    print("Question 2:")
-    print(false2_qn)
-
-    print("Question 3:")
-    print(correct_qn)
-
-    # table = Table(show_header=True, header_style="bold blue")
-    # table.add_column("Date", style="dim", width=12)
-    # table.add_column("Title")
-    # table.add_column("Production Budget", justify="right")
-    # table.add_column("Box Office", justify="right")
-    # table.add_row(
-    #     "Dev 20, 2019", "Star Wars: The Rise of Skywalker", "$275,000,000", "$375,126,118"
-    # )
-    # table.add_row(
-    #     "May 25, 2018",
-    #     "[red]Solo[/red]: A Star Wars Story",
-    #     "$275,000,000",
-    #     "$393,151,347",
-    # )
-    # table.add_row(
-    #     "Dec 15, 2017",
-    #     "Star Wars Ep. VIII: The Last Jedi",
-    #     "$262,000,000",
-    #     "[bold]$1,332,539,889[/bold]",
-    # )
-    #
-    # console = Console()
-    # console.print(table)
+    table = Table(show_header=True, header_style="bold blue")
+    table.add_column("Answer", width=60)
+    table.add_column("What was the question?", width=60)
+    table.add_row(
+        correct_ans, f"1) {rnd_questions[0]}\n\n2) {rnd_questions[1]}\n\n3) {rnd_questions[2]}"
+    )
+    console = Console()
+    console.print(table)
 
 
 if __name__ == "__main__":
