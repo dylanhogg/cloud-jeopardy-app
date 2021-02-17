@@ -32,40 +32,52 @@ def main(required_arg: str, optional_arg: str = None) -> None:
     logger.info(f"LOG_FILE_LEVEL = {env.get('LOG_FILE_LEVEL', 'Not set. Copy `.env_template` to `.env`')}")
 
     qnas = faq.get_data()
-
     count = len(qnas)
-    correct_qn_inx = random.randrange(0, count)
-    false_qn1_inx = random.randrange(0, count)
-    false_qn2_inx = random.randrange(0, count)
 
-    correct_ans = get_answer(qnas, correct_qn_inx)
+    while True:
+        correct_qn_inx = random.randrange(0, count)
+        false_qn1_inx = random.randrange(0, count)
+        false_qn2_inx = random.randrange(0, count)
 
-    questions = [
-        get_question(qnas, correct_qn_inx),
-        get_question(qnas, false_qn1_inx),
-        get_question(qnas, false_qn2_inx)
-    ]
+        correct_ans = get_answer(qnas, correct_qn_inx)
 
-    rnd_questions, correct_idx = randomise_questions(questions)
+        questions = [
+            get_question(qnas, correct_qn_inx),
+            get_question(qnas, false_qn1_inx),
+            get_question(qnas, false_qn2_inx)
+        ]
 
-    debug = True
-    if debug:
-        for qna in qnas:
-            print(qna)
-        print(f"\nAnswer: {correct_ans}\n")
-        print(f"Correct Qn: {questions[0]}")
-        print(f"False Qn 1: {questions[1]}")
-        print(f"False Qn 2: {questions[2]}\n")
-        print(f"Old correct index: 0; New correct index: {correct_idx}")
+        rnd_questions, correct_idx = randomise_questions(questions)
 
-    table = Table(show_header=True, header_style="bold blue")
-    table.add_column("Answer", width=60)
-    table.add_column("What was the question?", width=60)
-    table.add_row(
-        correct_ans, f"1) {rnd_questions[0]}\n\n2) {rnd_questions[1]}\n\n3) {rnd_questions[2]}"
-    )
-    console = Console()
-    console.print(table)
+        debug = False
+        if debug:
+            # for qna in qnas:
+            #     print(qna)
+            print(f"\nAnswer: {correct_ans}\n")
+            print(f"Correct Qn: {questions[0]}")
+            print(f"False Qn 1: {questions[1]}")
+            print(f"False Qn 2: {questions[2]}\n")
+            print(f"Old correct index: 0; New correct index: {correct_idx}")
+
+        table = Table(show_header=True, header_style="bold blue")
+        table.add_column("Answer", width=60)
+        table.add_column("What was the question?", width=60)
+        table.add_row(
+            correct_ans, f"1) {rnd_questions[0]}\n\n2) {rnd_questions[1]}\n\n3) {rnd_questions[2]}"
+        )
+        console = Console()
+        console.print(table)
+
+        correct_choice = str(correct_idx+1)
+        choice = input("What is your answer? 1, 2 or 3?\n").strip()
+        if choice == correct_choice:
+            print(f"Correct!\n")
+        else:
+            print(f"Wrong. The question was: {correct_choice}) {questions[0]}\n")
+
+        choice = input("Press enter to play again, any other key to exit.\n")
+        if len(choice) > 0:
+            break
 
 
 if __name__ == "__main__":
