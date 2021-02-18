@@ -1,25 +1,40 @@
 import urllib.request
+from entitles.qna import Qna
 from loguru import logger
 
 
-def get_data():
+def get_qnas():
     url = "https://raw.githubusercontent.com/dylanhogg/cloud-products/master/sample_data/aws_products/"
-    filename = "aws.amazon.com_api-gateway_faqs__faqs.txt"
+
+    #filename = "aws.amazon.com_api-gateway_faqs__faqs.txt"
     #filename = "aws.amazon.com_elasticbeanstalk_faqs__faqs.txt"
+    filename = "aws.amazon.com_machine-learning_containers_faqs__faqs.txt"
+
     lines = urllib.request.urlopen(url + filename)
+    lines = [line.decode('utf-8').strip() for line in lines]
 
-    qna = []
-    qn = ""
-    ans = []
-    for binline in lines:
-        # logger.info(line)
-        line = binline.decode('utf-8').strip()
+    return _parse_qnas(lines)
+
+
+def _parse_qnas(lines):
+    qnas = []
+    qn_line = ""
+    ans_lines = []
+
+    for line in lines:
         if line.startswith("Q:"):
-            if ans != "" and len(ans) > 0:
-                qna.append((qn, ans))  # TODO: bugs around this that can have empty qn.
-            qn = line
-            ans = []
-        else:
-            ans.append(line)
+            if len(qn_line) > 0 and len(ans_lines) > 0:
+                # Append previous question and answer
+                q = qn_line.replace("Q: ", "")
+                a = "\n".join(ans_lines)
+                qnas.append(Qna(q, a))
 
-    return qna
+            # Start fresh question and answer
+            qn_line = line
+            ans_lines = []
+        else:
+            ans_lines.append(line)
+
+    # TODO: how to find when the last answer finishes? Remove last one?
+
+    return qnas
