@@ -1,18 +1,10 @@
 import typer
-import random
 import time
 from loguru import logger
 from library import env, log
 from rich.console import Console
 from rich.table import Table
-from engine import faq
-
-
-def randomise_questions(qns, correct_idx=0):
-    rnd_qns = list(qns)
-    random.shuffle(rnd_qns)
-    new_correct_idx = rnd_qns.index(qns[correct_idx])
-    return rnd_qns, new_correct_idx
+from engine import faq, rand
 
 
 def main(required_arg: str, optional_arg: str = None) -> None:
@@ -26,9 +18,9 @@ def main(required_arg: str, optional_arg: str = None) -> None:
 
     while True:
         # correct_qn_inx = len(qnas) - 1
-        correct_qn_inx = random.randrange(0, count)
-        false_qn1_inx = random.randrange(0, count)
-        false_qn2_inx = random.randrange(0, count)
+        correct_qn_inx = rand.get_random(0, count)
+        false_qn1_inx = rand.get_random(0, count, [correct_qn_inx])
+        false_qn2_inx = rand.get_random(0, count, [correct_qn_inx, false_qn1_inx])
 
         correct_ans = qnas[correct_qn_inx].answer
 
@@ -38,7 +30,7 @@ def main(required_arg: str, optional_arg: str = None) -> None:
             qnas[false_qn2_inx].question,
         ]
 
-        rnd_questions, correct_idx = randomise_questions(questions)
+        rnd_questions, correct_idx = rand.randomise_questions(questions)
 
         debug = False
         if debug:
