@@ -6,9 +6,10 @@ from loguru import logger
 def get_qnas():
     url = "https://raw.githubusercontent.com/dylanhogg/cloud-products/master/sample_data/aws_products/"
 
-    #filename = "aws.amazon.com_api-gateway_faqs__faqs.txt"
-    #filename = "aws.amazon.com_elasticbeanstalk_faqs__faqs.txt"
-    filename = "aws.amazon.com_machine-learning_containers_faqs__faqs.txt"
+    # filename = "aws.amazon.com_api-gateway_faqs__faqs.txt"
+    # filename = "aws.amazon.com_elasticbeanstalk_faqs__faqs.txt"
+    # filename = "aws.amazon.com_machine-learning_containers_faqs__faqs.txt"
+    filename = "aws.amazon.com_ec2_faqs__faqs.txt"
 
     lines = urllib.request.urlopen(url + filename)
     lines = [line.decode('utf-8').strip() for line in lines]
@@ -35,6 +36,11 @@ def _parse_qnas(lines):
         else:
             ans_lines.append(line)
 
-    # TODO: how to find when the last answer finishes? Remove last one?
+    if len(ans_lines) > 0:
+        q = qn_line.replace("Q: ", "")
+        a = ans_lines[0]
+        # NOTE: For last question, only first line of answer is included.
+        #       It's difficult to know when last answer finishes and other guff starts.
+        qnas.append(Qna(q, a))
 
     return qnas

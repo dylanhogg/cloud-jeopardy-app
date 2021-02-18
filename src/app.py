@@ -25,6 +25,7 @@ def main(required_arg: str, optional_arg: str = None) -> None:
     count = len(qnas)
 
     while True:
+        # correct_qn_inx = len(qnas) - 1
         correct_qn_inx = random.randrange(0, count)
         false_qn1_inx = random.randrange(0, count)
         false_qn2_inx = random.randrange(0, count)
@@ -62,14 +63,15 @@ def main(required_arg: str, optional_arg: str = None) -> None:
         correct_choice = str(correct_idx+1)
         choice = input("What is the question? 1, 2 or 3?  ").strip()
         correct_text = f"The question was: {correct_choice}) {questions[0]}"
+        # TODO: include more info link?
 
         if choice == correct_choice:
             print(f"\nCorrect! {correct_text}\n")
         elif choice.lower() == "q":
-            print(f"\nBye! {correct_text}\n")
+            print(f"\nGoodbye! {correct_text}\n")
             break
         else:
-            print(f"\nWrong :( {correct_text}\n")
+            print(f"\nWrong. {correct_text}\n")
 
         time.sleep(1)
 
