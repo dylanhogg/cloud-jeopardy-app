@@ -1,5 +1,7 @@
 import app
+from engine import faq
 
 
 def test1() -> None:
-    app.main("req_arg")
+    qnas = faq.get_qnas()
+    assert len(qnas) > 0
