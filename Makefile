@@ -22,10 +22,6 @@ run:
 run_help:
 	source venv/bin/activate ; PYTHONPATH='./src' python -m app --help
 
-## Run jupyter lab
-jupyter:
-	source venv/bin/activate; PYTHONPATH='./src' jupyter lab
-
 ## Run unit tests
 test:
 	source venv/bin/activate ; PYTHONPATH='./src' pytest -vvv -s
