@@ -22,13 +22,23 @@ def main(required_arg: str, optional_arg: str = None) -> None:
         false_qn1_inx = rand.get_random(0, count, [correct_qn_inx])
         false_qn2_inx = rand.get_random(0, count, [correct_qn_inx, false_qn1_inx])
 
+        # Jeopardy style
         correct_ans = qnas[correct_qn_inx].answer
-
         questions = [
             qnas[correct_qn_inx].question,
             qnas[false_qn1_inx].question,
             qnas[false_qn2_inx].question,
         ]
+
+        # Traditional multi-choice style (also need to change headings etc)
+        traditional = False
+        if traditional:
+            correct_ans = qnas[correct_qn_inx].question
+            questions = [
+                qnas[correct_qn_inx].answer,
+                qnas[false_qn1_inx].answer,
+                qnas[false_qn2_inx].answer,
+            ]
 
         rnd_questions, correct_idx = rand.randomise_questions(questions)
 
@@ -56,13 +66,26 @@ def main(required_arg: str, optional_arg: str = None) -> None:
         choice = input("What is the question? 1, 2 or 3?  ").strip()
         correct_text = f"The question was: {correct_choice}) {questions[0]}"
         # TODO: include more info link?
+        # TODO: Ascii text? https://www.patorjk.com/software/taag/
 
         if choice == correct_choice:
-            print(f"\nCorrect! {correct_text}\n")
+            print(f"  _________  ___  ___  _______________")
+            print(f" / ___/ __ \/ _ \/ _ \/ __/ ___/_  __/")
+            print(f"/ /__/ /_/ / , _/ , _/ _// /__  / /")
+            print(f"\___/\____/_/|_/_/|_/___/\___/ /_/")
+            # print(f"Correct. {correct_text}\n")
         elif choice.lower() == "q":
+            print(f"  _________  ____  ___  _____  ______")
+            print(f" / ___/ __ \/ __ \/ _ \/ _ ) \/ / __/")
+            print(f"/ (_ / /_/ / /_/ / // / _  |\  / _/")
+            print(f"\___/\____/\____/____/____/ /_/___/")
             print(f"\nGoodbye! {correct_text}\n")
             break
         else:
+            print(f" _      _____  ____  _  _______")
+            print(f"| | /| / / _ \/ __ \/ |/ / ___/")
+            print(f"| |/ |/ / , _/ /_/ /    / (_ /")
+            print(f"|__/|__/_/|_|\____/_/|_/\___/")
             print(f"\nWrong. {correct_text}\n")
 
         time.sleep(1)
