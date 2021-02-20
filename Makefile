@@ -16,7 +16,7 @@ clean:
 
 ## Run the app
 run_app:
-	source venv/bin/activate ; PYTHONPATH='./src' python -m app --optional-arg opt1
+	source venv/bin/activate ; PYTHONPATH='./src/shared:./src/clients/python' python -m app --optional-arg opt1
 
 ## App help message
 run_help:
@@ -24,11 +24,11 @@ run_help:
 
 ## Run the REST server
 run_server:
-	source venv/bin/activate ; PYTHONPATH='./src' uvicorn faq:app --app-dir src/server --reload
+	source venv/bin/activate ; PYTHONPATH='./src/shared' uvicorn faq:app --app-dir src/server --reload
 
 ## Run unit tests
 test:
-	source venv/bin/activate ; PYTHONPATH='./src' pytest -vvv -s
+	source venv/bin/activate ; PYTHONPATH='./src/shared:./src/server' pytest -vvv -s
 
 ## Run black code formatter
 black:

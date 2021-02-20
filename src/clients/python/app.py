@@ -8,7 +8,7 @@ from pydantic import parse_obj_as
 from loguru import logger
 from rich.console import Console
 from rich.table import Table
-from entitles.qna import Qna
+from entites.qna import Qna
 from library import env, log
 
 

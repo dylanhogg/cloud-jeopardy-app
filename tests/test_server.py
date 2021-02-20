@@ -1,4 +1,4 @@
-from server import faq
+import faq
 
 
 def test1() -> None:

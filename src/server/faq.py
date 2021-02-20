@@ -1,5 +1,5 @@
 import urllib.request
-from entitles.qna import Qna
+from entites.qna import Qna
 from loguru import logger
 from typing import Optional
 from fastapi import FastAPI
