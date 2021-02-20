@@ -2,6 +2,7 @@ import time
 import requests
 import random
 import typer
+from urllib.parse import urljoin
 from typing import List
 from pydantic import parse_obj_as
 from loguru import logger
@@ -26,8 +27,14 @@ def get_random(start, stop=None, exclude=[]):
     return rnd
 
 
+def rest_call(path):
+    base = env.get("BASE_REST_SERVER", "http://127.0.0.1:8000/")
+    url = urljoin(base, path)
+    return requests.get(url).json()
+
+
 def rest_client_get_qnas():
-    qnas_json = requests.get("http://127.0.0.1:8000/get_qnas").json()
+    qnas_json = rest_call("get_qnas")
     return parse_obj_as(List[Qna], qnas_json)
 
 
