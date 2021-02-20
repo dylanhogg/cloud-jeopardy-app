@@ -1,40 +1,16 @@
 import time
-import requests
-import random
 import typer
-from urllib.parse import urljoin
 from typing import List
 from pydantic import parse_obj_as
 from loguru import logger
 from rich.console import Console
 from rich.table import Table
 from entites.qna import Qna
-from library import env, log
-
-
-def randomise_questions(qns, correct_idx=0):
-    rnd_qns = list(qns)
-    random.shuffle(rnd_qns)
-    new_correct_idx = rnd_qns.index(qns[correct_idx])
-    return rnd_qns, new_correct_idx
-
-
-def get_random(start, stop=None, exclude=[]):
-    while True:
-        rnd = random.randrange(start, stop)
-        if len(exclude) == 0 or rnd not in exclude:
-            break
-    return rnd
-
-
-def rest_call(path):
-    base = env.get("BASE_REST_SERVER", "http://127.0.0.1:8000/")
-    url = urljoin(base, path)
-    return requests.get(url).json()
+from library import env, log, rand, rest
 
 
 def rest_client_get_qnas():
-    qnas_json = rest_call("get_qnas")
+    qnas_json = rest.get("get_qnas")
     return parse_obj_as(List[Qna], qnas_json)
 
 
@@ -50,9 +26,9 @@ def main(optional_arg: str = None) -> None:
 
     while True:
         # correct_qn_inx = len(qnas) - 1
-        correct_qn_inx = get_random(0, count)
-        false_qn1_inx = get_random(0, count, [correct_qn_inx])
-        false_qn2_inx = get_random(0, count, [correct_qn_inx, false_qn1_inx])
+        correct_qn_inx = rand.get_random(0, count)
+        false_qn1_inx = rand.get_random(0, count, [correct_qn_inx])
+        false_qn2_inx = rand.get_random(0, count, [correct_qn_inx, false_qn1_inx])
 
         # Jeopardy style
         correct_ans = qnas[correct_qn_inx].answer
@@ -72,7 +48,7 @@ def main(optional_arg: str = None) -> None:
                 qnas[false_qn2_inx].answer,
             ]
 
-        rnd_questions, correct_idx = randomise_questions(questions)
+        rnd_questions, correct_idx = rand.randomise_questions(questions)
 
         debug = False
         if debug:
