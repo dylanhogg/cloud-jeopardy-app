@@ -15,12 +15,16 @@ clean:
 	rm -rf venv
 
 ## Run the app
-run:
-	source venv/bin/activate ; PYTHONPATH='./src' python -m app req1 --optional-arg opt1
+run_app:
+	source venv/bin/activate ; PYTHONPATH='./src' python -m app --optional-arg opt1
 
 ## App help message
 run_help:
 	source venv/bin/activate ; PYTHONPATH='./src' python -m app --help
+
+## Run the REST server
+run_server:
+	source venv/bin/activate ; PYTHONPATH='./src' uvicorn faq:app --app-dir src/server --reload
 
 ## Run unit tests
 test:

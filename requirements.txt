@@ -6,3 +6,5 @@ tqdm
 loguru
 rich
 fastapi
+pydantic
+requests

@@ -1,5 +1,4 @@
-import app
-from engine import faq
+from server import faq
 
 
 def test1() -> None:

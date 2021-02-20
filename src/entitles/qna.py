@@ -1,7 +1,7 @@
 from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass
-class Qna:
+class Qna(BaseModel):
     question: str
     answer: str
