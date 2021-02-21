@@ -24,7 +24,7 @@ run_help:
 
 ## Run the REST server
 run_server:
-	source venv/bin/activate ; PYTHONPATH='./src/shared' uvicorn faq:app --app-dir src/server --reload
+	source venv/bin/activate ; PYTHONPATH='./src/shared' uvicorn faq_server:app --app-dir src/server --reload
 
 ## Run unit tests
 test:

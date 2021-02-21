@@ -5,7 +5,7 @@ from pydantic import parse_obj_as
 from loguru import logger
 from rich.console import Console
 from rich.table import Table
-from entites.qna import Qna
+from entities.qna import Qna
 from library import env, log, rand, rest
 
 
@@ -20,7 +20,6 @@ def main(optional_arg: str = None) -> None:
     logger.info(f"LOG_STDERR_LEVEL = {env.get('LOG_STDERR_LEVEL', 'Not set. Copy `.env_template` to `.env`')}")
     logger.info(f"LOG_FILE_LEVEL = {env.get('LOG_FILE_LEVEL', 'Not set. Copy `.env_template` to `.env`')}")
 
-    # qnas = faq.get_qnas()
     qnas = rest_client_get_qnas()  # TODO: handle requests.exceptions.ConnectionError
     count = len(qnas)
 
