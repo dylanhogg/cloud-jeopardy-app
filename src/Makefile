@@ -11,5 +11,5 @@ down:
 logs:
 	docker-compose --project-name ${DOCKER_COMPOSE_PROJECT_NAME} logs -f
 
-shell:
-	docker-compose --project-name ${DOCKER_COMPOSE_PROJECT_NAME} exec web sh
+sh:
+	docker-compose --project-name ${DOCKER_COMPOSE_PROJECT_NAME} exec apiserver sh
