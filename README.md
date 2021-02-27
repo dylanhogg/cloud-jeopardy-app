@@ -10,3 +10,10 @@ and must phrase their responses in the form of questions.
 
 [CloudJeopardy!](https://github.com/dylanhogg/drh-cloud-jeopardy) is an app created by Dylan Hogg in which users are 
 presented with as AWS cloud FAQ answer and must choose the correct corresponding FAQ question.
+
+## Components
+
+1) FastAPI server
+1) Python client (shared entities with server via pydantic)
+1) Javascript client (WIP)
+1) Dockerised server

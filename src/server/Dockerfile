@@ -27,4 +27,6 @@ COPY ./shared /usr/src/app/
 # copy server app
 COPY ./server /usr/src/app/
 
+EXPOSE 8000
 
+ENTRYPOINT '/usr/src/app/run.sh'
