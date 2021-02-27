@@ -11,7 +11,6 @@ resource "aws_ecs_task_definition" "task_definition" {
     {
       "name": "${var.app_name}_task",
       "image": "${aws_ecr_repository.ecr.repository_url}",
-      "entryPoint": ["/usr/src/app/run.sh"],
       "essential": true,
       "portMappings": [
         {

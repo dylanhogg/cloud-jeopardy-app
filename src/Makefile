@@ -38,16 +38,14 @@ sh:
 tag:
 	docker tag ${DOCKER_COMPOSE_PROJECT_NAME}_server:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${DOCKER_COMPOSE_PROJECT_NAME}_server:latest
 
-## Docker push to ECR
-push: aws-ecr-login
+## Docker push to ECR (after login, tag)
+push: aws-ecr-login tag
 	docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${DOCKER_COMPOSE_PROJECT_NAME}_server:latest
 
 ## Docker run locally
 run:
 	docker run -it -p 8000:80 cloud-jeopardy-api_server
 	#docker run -it -p 8000:80 --entrypoint /bin/sh cloud-jeopardy-api_server
-	#docker run -it -p 8000:80 --entrypoint /usr/src/app/run.sh cloud-jeopardy-api_server
-	#docker run -it -p 8000:80 --command /usr/src/app/run.sh cloud-jeopardy-api_server
 
 # AWS
 
