@@ -11,7 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # copy server app
-COPY ./server/requirements.txt /usr/src/app/
+COPY ./server/app/requirements.txt /usr/src/app/
 
 # install dependencies
 RUN set -eux \
@@ -25,10 +25,12 @@ RUN set -eux \
 COPY ./shared /usr/src/app/
 
 # copy server app
-COPY ./server /usr/src/app/
+COPY ./server/app /usr/src/app/
 
 # ???
 EXPOSE 80
 
+RUN chmod +x /usr/src/app/run.sh
+
 # ???
-CMD /usr/src/app/run.sh
+ENTRYPOINT /usr/src/app/run.sh

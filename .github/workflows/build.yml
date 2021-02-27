@@ -34,4 +34,4 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Server tests with pytest
         run: |
-          PYTHONPATH='./src/shared:./src/server' pytest
+          PYTHONPATH='./src/shared:./src/server/app' pytest
