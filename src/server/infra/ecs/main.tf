@@ -5,17 +5,17 @@ resource "aws_ecs_cluster" "cloud-jeopardy" {
 resource "aws_ecs_task_definition" "task_definition" {
   family                   = "${var.app_name}_task"
   execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
-  task_role_arn            = "arn:aws:iam::905234897161:role/ecsTaskExecutionRole"
+  task_role_arn            = "arn:aws:iam::905234897161:role/ecsTaskExecutionRole"  # ????
   container_definitions    = <<DEFINITION
   [
     {
       "name": "${var.app_name}_task",
-      "image": "${var.ecr_repository_url}",
+      "image": ${aws_ecr_repository.ecr.repository_url},
       "essential": true,
       "portMappings": [
         {
-          "containerPort": 8000,
-          "hostPort": 8000
+          "containerPort": 80,
+          "hostPort": 80
         }
       ],
       "memory": 512,
