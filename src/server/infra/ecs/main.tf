@@ -10,7 +10,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   [
     {
       "name": "${var.app_name}_task",
-      "image": ${aws_ecr_repository.ecr.repository_url},
+      "image": "${aws_ecr_repository.ecr.repository_url}",
       "essential": true,
       "portMappings": [
         {
