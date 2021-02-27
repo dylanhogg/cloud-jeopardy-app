@@ -44,7 +44,7 @@ push: aws-ecr-login
 
 ## Docker run locally
 run:
-	docker run -it -p 8001:8000 cloud-jeopardy-api_server
+	docker run -it -p 8000:80 cloud-jeopardy-api_server
 	#docker run -it -p 8001:8000 --entrypoint "sh" cloud-jeopardy-api_server
 
 # AWS
@@ -52,11 +52,6 @@ run:
 ## AWS ECR loging
 aws-ecr-login:
 	aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
-
-## AWS ECR create repo
-# aws-ecr-create-repo:
-# 	# One time only
-# 	aws ecr create-repository --repository-name ${DOCKER_COMPOSE_PROJECT_NAME}_server
 
 ## AWS ECR list images
 aws-ecr-list:
@@ -67,27 +62,22 @@ aws-ecr-list:
 
 ## TF init
 tf-init:
-	cd server/infra/ecr; terraform init -var-file=variables.tfvars; cd -
 	cd server/infra/ecs; terraform init -var-file=variables.tfvars; cd -
 
 ## TF validate
 tf-validate:
-	cd server/infra/ecr; terraform validate; cd -
 	cd server/infra/ecs; terraform validate; cd -
 
 ## TF plan
 tf-plan:
-	cd server/infra/ecr; terraform plan -var-file=variables.tfvars; cd -
 	cd server/infra/ecs; terraform plan -var-file=variables.tfvars; cd -
 
 ## TF apply
 tf-apply:
-	cd server/infra/ecr; terraform apply -var-file=variables.tfvars -auto-approve; cd -
 	cd server/infra/ecs; terraform apply -var-file=variables.tfvars -auto-approve; cd -
 
 ## TF destroy
 tf-destroy:
-	cd server/infra/ecr; terraform destroy -var-file=variables.tfvars -auto-approve; cd -
 	cd server/infra/ecs; terraform destroy -var-file=variables.tfvars -auto-approve; cd -
 
 
