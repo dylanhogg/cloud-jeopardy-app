@@ -73,7 +73,7 @@ tf-plan:
 	cd server/infra/ecs; terraform plan -var-file=variables.tfvars; cd -
 
 ## TF apply
-tf-apply:
+tf-apply: tf-plan
 	cd server/infra/ecs; terraform apply -var-file=variables.tfvars -auto-approve; cd -
 
 ## TF destroy

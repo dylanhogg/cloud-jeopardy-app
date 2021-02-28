@@ -4,8 +4,8 @@ resource "aws_ecs_cluster" "cloud-jeopardy" {
 
 resource "aws_ecs_task_definition" "task_definition" {
   family                   = "${var.app_name}_task"
-  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
-  task_role_arn            = "arn:aws:iam::905234897161:role/ecsTaskExecutionRole"  # ????
+  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn  # Capabilities of ECS agent, e.g. erc, logs
+  # task_role_arn          = # Capabilities within the task and code
   container_definitions    = <<DEFINITION
   [
     {
@@ -31,10 +31,10 @@ resource "aws_ecs_task_definition" "task_definition" {
     }
   ]
   DEFINITION
-  requires_compatibilities = ["FARGATE"] # Stating that we are using ECS Fargate
-  network_mode             = "awsvpc"    # Using awsvpc as our network mode as this is required for Fargate
-  memory                   = 512         # Specifying the memory our container requires
-  cpu                      = 256         # Specifying the CPU our container requires
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"  # awsvpc network mode required for Fargate
+  memory                   = 512
+  cpu                      = 256
 
   tags = {
     tag_version = "1.0"
@@ -42,42 +42,14 @@ resource "aws_ecs_task_definition" "task_definition" {
     app_name    = var.app_name
     env         = var.env
   }
-}
-
-resource "aws_iam_role" "ecsTaskExecutionRole" {
-  name               = "${var.app_name}_ecsTaskExecutionRole"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
-
-  tags = {
-    tag_version = "1.0"
-    deployment  = "tf"
-    app_name    = var.app_name
-    env         = var.env
-  }
-}
-
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
-  role       = aws_iam_role.ecsTaskExecutionRole.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 resource "aws_ecs_service" "cloud-jeopardy-api_service" {
-  name            = "cloud-jeopardy-api_service"                           # Naming our first service
-  cluster         = aws_ecs_cluster.cloud-jeopardy.id                      # Referencing our created Cluster
-  task_definition = aws_ecs_task_definition.task_definition.arn            # Referencing the task our service will spin up
+  name            = "cloud-jeopardy-api_service"
+  cluster         = aws_ecs_cluster.cloud-jeopardy.id
+  task_definition = aws_ecs_task_definition.task_definition.arn
   launch_type     = "FARGATE"
-  desired_count   = 1     # Setting the number of containers we want deployed to 3
+  desired_count   = 1
 
   network_configuration {
     subnets          = [
@@ -85,7 +57,7 @@ resource "aws_ecs_service" "cloud-jeopardy-api_service" {
       aws_default_subnet.default_subnet_b.id,
       aws_default_subnet.default_subnet_c.id
     ]
-    assign_public_ip = true   # Providing our containers with public IPs
+    assign_public_ip = true
   }
 
   tags = {
