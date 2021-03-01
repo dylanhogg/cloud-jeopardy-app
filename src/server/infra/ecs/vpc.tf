@@ -14,3 +14,8 @@ resource "aws_default_subnet" "default_subnet_b" {
 resource "aws_default_subnet" "default_subnet_c" {
   availability_zone = "${var.region}c"
 }
+
+// TODO: use data construct: https://dev.to/txheo/a-guide-to-provisioning-aws-ecs-fargate-using-terraform-1joo
+//data "aws_subnet_ids" "default" {
+//  vpc_id = "${data.aws_vpc.default.id}"
+//}

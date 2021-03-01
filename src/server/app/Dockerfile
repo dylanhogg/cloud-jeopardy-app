@@ -11,6 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # copy server app
+# TODO: use requirements_freeze.txt here
 COPY ./server/app/requirements.txt /usr/src/app/
 
 # install dependencies
@@ -27,8 +28,8 @@ COPY ./shared /usr/src/app/
 # copy server app
 COPY ./server/app /usr/src/app/
 
-# ???
-EXPOSE 80
+# TODO: EXPOSE needed ???
+EXPOSE 8000
 
 RUN chmod +x /usr/src/app/run.sh
 

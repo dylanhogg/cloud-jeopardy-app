@@ -17,3 +17,11 @@ variable "app_name" {
 variable "ecr_repository_name" {
   type=string
 }
+
+variable "container_port" {
+  type=number
+}
+
+variable "alb_port" {
+  type=number
+}
