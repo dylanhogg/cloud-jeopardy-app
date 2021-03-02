@@ -52,11 +52,6 @@ resource "aws_ecs_task_definition" "task_definition" {
   }
 }
 
-# Error: InvalidParameterException: The target group with targetGroupArn arn:aws:elasticloadbalancing:us-east-1:905234897161:targetgroup/cloud-jeopardy-api-alb-tg/5b5b463432bb4bbc does not have an associated load balancer. "cloud-jeopardy-api_service"
-
-# ALB: 504 Gateway Time-out:
-# ECS: STOPPED (Task failed ELB health checks in (target-group arn:aws:elasticloadbalancing:us-east-1:905234897161:targetgroup/cloud-jeopardy-api-alb-tg/3f525d7e97324ffa))
-
 resource "aws_ecs_service" "cloud-jeopardy-api_service" {
   name            = "${var.app_name}_service"
   cluster         = aws_ecs_cluster.cloud-jeopardy.id
@@ -65,25 +60,21 @@ resource "aws_ecs_service" "cloud-jeopardy-api_service" {
   desired_count   = 1
 
   network_configuration {
-    subnets          = [
-      aws_default_subnet.default_subnet_a.id,
-      aws_default_subnet.default_subnet_b.id,
-      aws_default_subnet.default_subnet_c.id
-    ]
-    # security_groups  = [aws_security_group.service.id]
-    assign_public_ip = true  # Assign a public IP address to the ENI (fargate only)
+    subnets            = data.aws_subnet_ids.default.ids
+    security_groups  = [aws_security_group.ecs_tasks.id]
+    assign_public_ip = true  # Assign a public IP address to the ENI (fargate only) TODO: is this still reqd with ALB?
   }
 
   load_balancer {
-    target_group_arn = aws_alb_target_group.alb_target_group.arn
+    target_group_arn = aws_lb_target_group.lb_target_group.arn
     container_name   = "${var.app_name}_task"
     container_port   = var.container_port
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.ecsTaskExecutionRole_policy,
     aws_ecs_task_definition.task_definition,
-    aws_lb_listener.https_forward
+    aws_lb_listener.https_forward,
+    aws_iam_role_policy_attachment.ecsTaskExecutionRole_policy
   ]
 
   propagate_tags = "TASK_DEFINITION"

@@ -33,5 +33,4 @@ EXPOSE 8000
 
 RUN chmod +x /usr/src/app/run.sh
 
-# ???
 ENTRYPOINT /usr/src/app/run.sh

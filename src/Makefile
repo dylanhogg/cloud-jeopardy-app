@@ -44,7 +44,7 @@ push: aws-ecr-login tag
 
 ## Docker run locally
 run:
-	docker run -it -p 8000:80 cloud-jeopardy-api_server
+	docker run -it -p 8000:8000 cloud-jeopardy-api_server
 	#docker run -it -p 8000:80 --entrypoint /bin/sh cloud-jeopardy-api_server
 
 # AWS

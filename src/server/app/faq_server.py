@@ -22,6 +22,11 @@ def get_qnas():
     return {"health": "ok"}
 
 
+@app.get("/version")
+def get_qnas():
+    return {"version": "v0.0.1"}
+
+
 @app.get("/get_qnas")
 def get_qnas():
     url = "https://raw.githubusercontent.com/dylanhogg/cloud-products/master/sample_data/aws_products/"
