@@ -1,0 +1,5 @@
+cloud-products
+pydantic
+typer
+tqdm
+loguru

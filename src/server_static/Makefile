@@ -5,12 +5,32 @@ AWS_PROFILE=prd-non-tf-905234897161
 AWS_ACCOUNT_ID=905234897161
 AWS_REGION=us-east-1
 
+# Local app
+
+## Create virtual environment
+venv:
+	python3 -m venv venv
+	source venv/bin/activate ; pip install --upgrade pip ; python3 -m pip install -r requirements-dev.txt
+	source venv/bin/activate ; pip freeze > requirements_freeze.txt
+
+## Clean virtual environment
+clean:
+	rm -rf venv
+
+# TODO: rename
+
+## Run S3 loader
+s3_loader:
+	source venv/bin/activate ; PYTHONPATH='../shared:./app' python -m s3_loader
+
+
 # AWS Command Tools
 
 ## AWS S3 CP files to S3
 s3-cp:
 	aws s3 cp static_files s3://${ENV}-s3-${APP_NAME} --recursive --profile ${AWS_PROFILE}
 
+## AWS S3 RM files from S3
 s3-rm:
 	aws s3 rm s3://${ENV}-s3-${APP_NAME} --recursive
 
