@@ -4,7 +4,6 @@ AWS_PROFILE=prd-non-tf-905234897161
 AWS_ACCOUNT_ID=905234897161
 AWS_REGION=us-east-1
 
-
 # Docker compose
 
 ## Clean python cache
@@ -62,23 +61,23 @@ aws-ecr-list:
 
 ## TF init
 tf-init:
-	cd server/infra/ecs; terraform init -var-file=variables.tfvars; cd -
+	cd infra/ecs; terraform init -var-file=variables.tfvars; cd -
 
 ## TF validate
 tf-validate:
-	cd server/infra/ecs; terraform validate; cd -
+	cd infra/ecs; terraform validate; cd -
 
 ## TF plan
 tf-plan:
-	cd server/infra/ecs; terraform plan -var-file=variables.tfvars; cd -
+	cd infra/ecs; terraform plan -var-file=variables.tfvars; cd -
 
 ## TF apply
 tf-apply: tf-plan
-	cd server/infra/ecs; terraform apply -var-file=variables.tfvars -auto-approve; cd -
+	cd infra/ecs; terraform apply -var-file=variables.tfvars -auto-approve; cd -
 
 ## TF destroy
 tf-destroy:
-	cd server/infra/ecs; terraform destroy -var-file=variables.tfvars -auto-approve; cd -
+	cd infra/ecs; terraform destroy -var-file=variables.tfvars -auto-approve; cd -
 
 
 #################################################################################
