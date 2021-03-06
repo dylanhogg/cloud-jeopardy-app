@@ -1,3 +1,4 @@
+cloud-products
 python-dotenv
 click
 sphinx
