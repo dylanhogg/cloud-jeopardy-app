@@ -43,6 +43,15 @@ resource "aws_s3_bucket" "s3_bucket" {
     error_document = "error.html"
   }
 
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET"]
+    // allowed_origins = ["https://s3-website-test.hashicorp.com"]
+    allowed_origins = ["*"]  // TODO: review
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+
   tags = {
     tag_version = "1.0"
     deployment  = "tf"
