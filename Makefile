@@ -14,10 +14,6 @@ venv:
 clean:
 	rm -rf venv
 
-## TEMP: S3 loader
-s3_loader:
-	source venv/bin/activate ; PYTHONPATH='./src/shared:./src/server_static/app' python -m s3_loader
-
 ## Run the app
 run_app:
 	source venv/bin/activate ; PYTHONPATH='./src/shared:./src/clients/python' python -m app --optional-arg opt1
