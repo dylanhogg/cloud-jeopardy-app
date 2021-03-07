@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cloud Jeopardy!</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.22.0/js/jquery.terminal.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.22.0/css/jquery.terminal.min.css" rel="stylesheet"/>
+    <script>
+        jQuery(function($, undefined) {
+            $('#term_demo').terminal({
+                cloud: function(product) {
+                    this.echo('play cloud jeopardy with: ' + product);
+                    $.ajax({
+                      type: "GET",
+                      url: "https://prd-s3-cloud-jeopardy-api.s3.amazonaws.com/faqs/api-gateway-faq.json",
+                      cache: false,
+                      success: function(data) {
+                        // console.log(data)
+                        var terminal = $.terminal.active()
+                        terminal.echo("ajox success");
+                        //terminal.echo(JSON.stringify(data));
+                        terminal.echo(JSON.stringify(data[0]["question"]));
+                        terminal.echo(JSON.stringify(data[0]["answer"]));
+                      }
+                    });
+                },
+                add: function(a, b) {
+                    this.echo(a + b);
+                },
+                re: function(re, str) {
+                   if (re instanceof RegExp && re.test(str)) {
+                      this.echo(str + ' [[;green;]match]');
+                   }
+                },
+                foo: 'foo.php',
+                bar: {
+                    sub: function(a, b) {
+                        this.echo(a - b);
+                    }
+                }
+            }, {
+                height: 600,
+                width: 1024,
+                prompt: 'cloud-jeopardy> ',
+                greetings: 'Welcome to Cloud Jeopardy!'
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="term_demo"></div>
+</body>
+</html>
