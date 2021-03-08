@@ -18,99 +18,110 @@
         var data_ready = false;
         var product_name = 'api-gateway';
 
+        var config_spinner_name = 'dots';
+
         $(function($, undefined) {
-            // $.ajax({
-            //   type: "GET",
-            //   // url: "https://prd-s3-cloud-jeopardy-api.s3.amazonaws.com/faqs/api-gateway-faq.json",
-            //   url: "https://prd-s3-cloud-jeopardy-api.s3.amazonaws.com/faqs/" + product_name + "-faq.json",
-            //   cache: false,
-            //   success: function(data) {
-            //     // console.log(data)
-            //     qna_data = data
-            //     qna_data_count = Object.keys(qna_data).length
-            //     data_ready = true;
-            //   },
-            //   error: function(data) {
-            //     console.log('ajax error');
-            //   },
-            // });
+            var spinners_url = 'spinners.json';
+            $.getJSON(spinners_url, function(spinners) {
+                var animation = false;
+                var timer;
+                var prompt;
+                var spinner;
+                var i;
 
-            $('#terminal').terminal({
-                // cl1: function(product) {
-                //     this.echo('play cloud jeopardy with: ' + product);
-                //     $.ajax({
-                //       type: "GET",
-                //       url: "https://prd-s3-cloud-jeopardy-api.s3.amazonaws.com/faqs/api-gateway-faq.json",
-                //       cache: false,
-                //       success: function(data) {
-                //         // console.log(data)
-                //         var terminal = $.terminal.active()
-                //         // var term = $(this).terminal();
-                //         terminal.echo("ajax success");
-                //         //terminal.echo(JSON.stringify(data));
-                //         terminal.echo(JSON.stringify(data[0]["question"]));
-                //         terminal.echo(JSON.stringify(data[0]["answer"]));
-                //       },
-                //       error: function(data) {
-                //         console.log('ajax error');
-                //       },
-                //     });
-                // },
-                cl2: function() {
-                    var echo = $.terminal.active().echo;
-                    data = qna_data;
-                    if (data === null) {
-                        echo("Still loading data...");
-                        return;
+                function start(term, spinner) {
+                    animation = true;
+                    i = 0;
+                    function set() {
+                        var text = spinner.frames[i++ % spinner.frames.length];
+                        term.set_prompt(text);
+                    };
+                    prompt = term.get_prompt();
+                    term.find('.cursor').hide();
+                    set();
+                    timer = setInterval(set, spinner.interval);
+                }
+
+                function stop(term, spinner) {
+                    setTimeout(function() {
+                        clearInterval(timer);
+                        //var frame = spinner.frames[i % spinner.frames.length];
+                        //term.set_prompt(prompt).echo(frame);
+                        term.set_prompt(prompt);
+                        animation = false;
+                        term.find('.cursor').show();
+                    }, 0);
+                }
+
+                $('#terminal').terminal({
+                    cl2: function() {
+                        var echo = $.terminal.active().echo;
+                        data = qna_data;
+                        if (data === null) {
+                            echo("Still loading data...");
+                            return;
+                        }
+                        echo(JSON.stringify(data[0]["question"]));
+                        echo(JSON.stringify(data[0]["answer"]));
+                        echo(Object.keys(data).length);
+                    },
+                    help: function() {
+                        this.echo('TODO');
+                    },
+                    status: function() {
+                        this.echo('data_ready   = ' + data_ready);
+                        this.echo('product_name = ' + product_name);
+                    },
+                    load: function(product) {
+                        // this.echo('load product: ' + product);
+
+                        spinner = spinners[config_spinner_name];
+                        start(this, spinner);
+
+                        data_ready = false;
+                        data_url = "https://prd-s3-cloud-jeopardy-api.s3.amazonaws.com/faqs/" + product + "-faq.json";
+
+                        $.ajax({
+                          type: "GET",
+                          url: data_url,
+                          cache: false,
+                          success: function(data) {
+                            var term = $.terminal.active()
+                            var echo = term.echo;
+
+                            stop(term, spinner);
+
+                            qna_data = data;
+                            qna_data_count = Object.keys(qna_data).length;
+                            data_ready = true;
+                            product_name = product;
+
+                            var idx = randomNumber(0, qna_data_count);
+                            echo("Loaded " + product_name + " question #" + idx);
+                            echo(JSON.stringify(data[idx]["question"]));
+                            echo(JSON.stringify(data[idx]["answer"]));
+
+                          },
+                          error: function(data) {
+                            console.log('ajax error');
+                            console.log(data);
+                            var term = $.terminal.active()
+                            var echo = term.echo;
+
+                            stop(term, spinner);
+
+                            echo("ajax error: " + data.status + " " + data.statusText + " for url: " + data_url);
+                          },
+                        });
                     }
-                    echo(JSON.stringify(data[0]["question"]));
-                    echo(JSON.stringify(data[0]["answer"]));
-                    echo(Object.keys(data).length);
-                },
-                help: function() {
-                    this.echo('TODO');
-                },
-                status: function() {
-                    this.echo('data_ready   = ' + data_ready);
-                    this.echo('product_name = ' + product_name);
-                },
-                load: function(product) {
-                    // this.echo('load product: ' + product);
-                    data_ready = false;
-                    data_url = "https://prd-s3-cloud-jeopardy-api.s3.amazonaws.com/faqs/" + product + "-faq.json";
-
-                    $.ajax({
-                      type: "GET",
-                      url: data_url,
-                      cache: false,
-                      success: function(data) {
-                        var echo = $.terminal.active().echo;
-
-                        qna_data = data;
-                        qna_data_count = Object.keys(qna_data).length;
-                        data_ready = true;
-                        product_name = product;
-
-                        var idx = randomNumber(0, qna_data_count);
-                        echo(product_name + " question #" + idx);
-                        echo(JSON.stringify(data[idx]["question"]));
-                        echo(JSON.stringify(data[idx]["answer"]));
-                      },
-                      error: function(data) {
-                        console.log('ajax error');
-                        console.log(data);
-                        var echo = $.terminal.active().echo;
-                        echo("ajax error: " + data.status + " " + data.statusText + " for url: " + data_url);
-                      },
-                    });
-                }
-            }, {
-                name: 'cloud_jeopardy',
-                prompt: 'cloud-jeopardy> ',
-                greetings: 'Welcome to Cloud Jeopardy!',
-                completion: function(command, callback) {
-                    callback(['help', 'status', 'load', 'sagemaker', 'api-gateway']);
-                }
+                }, {
+                    name: 'cloud_jeopardy',
+                    prompt: 'cloud-jeopardy> ',
+                    greetings: 'Welcome to Cloud Jeopardy!',
+                    completion: function(command, callback) {
+                        callback(['help', 'status', 'load', 'sagemaker', 'api-gateway']);
+                    }
+                });
             });
         });
     </script>
