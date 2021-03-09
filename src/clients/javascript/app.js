@@ -107,11 +107,14 @@ $(function($, undefined) {
 
                     term.echo("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n┃ Answer                         ┃\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
                             + data[idx1]["answer"]);
-                    term.echo("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n┃ Question A                     ┃\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+
+                    term.echo("\n┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n┃ What was the question?         ┃\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+
+                    term.echo("[A] "
                             + data[idx1]["question"]);
-                    term.echo("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n┃ Question B                     ┃\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+                    term.echo("\n[B] "
                             + data[idx2]["question"]);
-                    term.echo("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n┃ Question C                     ┃\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+                    term.echo("\n[C] "
                             + data[idx3]["question"]);
                     term.echo("");
 
