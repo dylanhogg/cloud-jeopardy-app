@@ -103,13 +103,13 @@
                             var idx3 = randomNumber(0, qna_data_count);
 
                             term.echo("\nAnswer:");
-                            term.echo(JSON.stringify(data[idx1]["answer"]));
+                            term.echo(data[idx1]["answer"]);
                             term.echo("\nQuestion A:");
-                            term.echo(JSON.stringify(data[idx1]["question"]));
+                            term.echo(data[idx1]["question"]);
                             term.echo("\nQuestion B:");
-                            term.echo(JSON.stringify(data[idx2]["question"]));
+                            term.echo(data[idx2]["question"]);
                             term.echo("\nQuestion C:");
-                            term.echo(JSON.stringify(data[idx3]["question"]));
+                            term.echo(data[idx3]["question"]);
                             term.echo("\n");
 
                             correct_answer = 1;
