@@ -7,15 +7,28 @@ function handleAnswer(term, answer, correct_answer) {
         term.echo('Game has not started.');
     } else if (answer === correct_answer) {
         state_correct++;
+        state_total++;
         term.echo('Correct!');
         term.echo('Score: ' + state_correct + "/" + state_total);
         // TODO: add correct streak
     } else {
         state_incorrect++;
+        state_total++;
         term.echo('Wrong :(');
+        term.echo('Correct answer was ' + correct_answer);  // TODO: convert nmeric to alpha
         term.echo('Score: ' + state_correct + "/" + state_total);
     }
 }
+
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+//function shuffleArrayInplace(array) {
+//    for (var i = array.length - 1; i > 0; i--) {
+//        var j = Math.floor(Math.random() * (i + 1));
+//        var temp = array[i];
+//        array[i] = array[j];
+//        array[j] = temp;
+//    }
+//}
 
 var qna_data = null;
 var qna_data_count = 0;
@@ -102,24 +115,45 @@ $(function($, undefined) {
                     product_name = product;
 
                     var idx1 = randomNumber(0, qna_data_count);
-                    var idx2 = randomNumber(0, qna_data_count);
-                    var idx3 = randomNumber(0, qna_data_count);
+                    var idx2 = randomNumber(0, qna_data_count);  // TODO: exclude prev 1
+                    var idx3 = randomNumber(0, qna_data_count);  // TODO: exclude prev 2
 
-                    term.echo("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n┃ Answer                         ┃\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
-                            + data[idx1]["answer"]);
+                    var selected_qnas = [
+                        data[idx1],
+                        data[idx2],
+                        data[idx3]
+                    ]
 
-                    term.echo("\n┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n┃ What was the question?         ┃\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+                    correct_answer = randomNumber(1,3);
 
-                    term.echo("[A] "
-                            + data[idx1]["question"]);
-                    term.echo("\n[B] "
-                            + data[idx2]["question"]);
-                    term.echo("\n[C] "
-                            + data[idx3]["question"]);
-                    term.echo("");
+                    var box_top = "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
+                    var box_ans = "┃ Given the answer:              ┃\n";
+                    var box_qns = "┃ What was the question?         ┃\n";
+                    var box_btm = "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
 
-                    correct_answer = 1;
-                    state_total++;
+                    // Display answer
+                    term.echo(box_top + box_ans + box_btm);
+                    term.echo(selected_qnas[correct_answer]["answer"]);
+
+                    // Display options
+                    term.echo(box_top + box_qns + box_btm);
+                    term.echo("[A] " + selected_qnas[0]["question"] + "\n");
+                    term.echo("[B] " + selected_qnas[1]["question"] + "\n");
+                    term.echo("[C] " + selected_qnas[2]["question"] + "\n");
+
+                    // Debug
+                    term.echo("\nDebug:")
+                    term.echo("\ncorrect_answer:" + correct_answer);
+                    term.echo(selected_qnas[correct_answer]["question"]);
+                    term.echo("")
+//                    term.echo(selected_qnas[correct_answer]["answer"]);
+//                    term.echo("")
+
+//                    for (i=0; i<100; i++) {
+//                        term.echo(randomNumber(0,3));
+//                    }
+
+
                   },
                   error: function(data) {
                     console.log('ajax error');
