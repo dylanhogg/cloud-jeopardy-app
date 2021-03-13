@@ -18,17 +18,78 @@ function handleAnswer(term, answer, correct_answer) {
         term.echo('Correct answer was ' + correct_answer);  // TODO: convert nmeric to alpha
         term.echo('Score: ' + state_correct + "/" + state_total);
     }
+
+    term.echo("DEUBG:");
+    term.echo('answer =          ' + answer);
+    term.echo('correct_answer =  ' + correct_answer);
+    term.echo('state_incorrect = ' + answer);
+    term.echo('state_correct =   ' + answer);
+    term.echo('state_total =     ' + answer);
 }
 
-// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-//function shuffleArrayInplace(array) {
-//    for (var i = array.length - 1; i > 0; i--) {
-//        var j = Math.floor(Math.random() * (i + 1));
-//        var temp = array[i];
-//        array[i] = array[j];
-//        array[j] = temp;
-//    }
-//}
+function playJeopardy(term, product, stopSpinningFn) {
+    data_ready = false;
+    data_url = "https://prd-s3-cloud-jeopardy-api.s3.amazonaws.com/faqs/" + product + "-faq.json";
+
+    $.ajax({
+      type: "GET",
+      url: data_url,
+      cache: false,
+      success: function(data) {
+        stopSpinningFn(term);
+
+        qna_data = data;
+        qna_data_count = Object.keys(qna_data).length;
+        data_ready = true;
+        product_name = product;
+
+        var idx1 = randomNumber(0, qna_data_count);
+        var idx2 = randomNumber(0, qna_data_count);  // TODO: exclude prev 1
+        var idx3 = randomNumber(0, qna_data_count);  // TODO: exclude prev 2
+
+        var selected_qnas = [
+            data[idx1],
+            data[idx2],
+            data[idx3]
+        ]
+
+        correct_answer = randomNumber(1,3);
+
+        var box_top = "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
+        var box_ans = "┃ Given the answer:              ┃\n";
+        var box_qns = "┃ What was the question?         ┃\n";
+        var box_btm = "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
+
+        // Display answer
+        term.echo(box_top + box_ans + box_btm);
+        term.echo(selected_qnas[correct_answer]["answer"]);
+
+        // Display options
+        term.echo(box_top + box_qns + box_btm);
+        term.echo("[A] " + selected_qnas[0]["question"] + "\n");
+        term.echo("[B] " + selected_qnas[1]["question"] + "\n");
+        term.echo("[C] " + selected_qnas[2]["question"] + "\n");
+
+        // Debug
+        term.echo("\nDebug:")
+        term.echo("\ncorrect_answer:" + correct_answer);
+        term.echo(selected_qnas[correct_answer]["question"]);
+        term.echo("")
+//      term.echo(selected_qnas[correct_answer]["answer"]);
+//      term.echo("")
+
+//      for (i=0; i<100; i++) {
+//          term.echo(randomNumber(0,3));
+//      }
+      },
+      error: function(data) {
+        console.log('ajax error');
+        console.log(data);
+        stopSpinningFn(term);
+        term.echo("Sorry, my bad :( Ajax error: " + data.status + " " + data.statusText + " for url: " + data_url);
+      },
+    });
+}
 
 var qna_data = null;
 var qna_data_count = 0;
@@ -63,7 +124,7 @@ $(function($, undefined) {
             timer = setInterval(set, spinner.interval);
         }
 
-        function stop(term, spinner) {
+        function stop(term) {
             setTimeout(function() {
                 clearInterval(timer);
                 term.set_prompt(prompt);
@@ -97,72 +158,7 @@ $(function($, undefined) {
             play: function(product) {
                 spinner = spinners[config_spinner_name];
                 start(this, spinner);
-
-                data_ready = false;
-                data_url = "https://prd-s3-cloud-jeopardy-api.s3.amazonaws.com/faqs/" + product + "-faq.json";
-
-                $.ajax({
-                  type: "GET",
-                  url: data_url,
-                  cache: false,
-                  success: function(data) {
-                    var term = $.terminal.active()
-                    stop(term, spinner);
-
-                    qna_data = data;
-                    qna_data_count = Object.keys(qna_data).length;
-                    data_ready = true;
-                    product_name = product;
-
-                    var idx1 = randomNumber(0, qna_data_count);
-                    var idx2 = randomNumber(0, qna_data_count);  // TODO: exclude prev 1
-                    var idx3 = randomNumber(0, qna_data_count);  // TODO: exclude prev 2
-
-                    var selected_qnas = [
-                        data[idx1],
-                        data[idx2],
-                        data[idx3]
-                    ]
-
-                    correct_answer = randomNumber(1,3);
-
-                    var box_top = "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
-                    var box_ans = "┃ Given the answer:              ┃\n";
-                    var box_qns = "┃ What was the question?         ┃\n";
-                    var box_btm = "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
-
-                    // Display answer
-                    term.echo(box_top + box_ans + box_btm);
-                    term.echo(selected_qnas[correct_answer]["answer"]);
-
-                    // Display options
-                    term.echo(box_top + box_qns + box_btm);
-                    term.echo("[A] " + selected_qnas[0]["question"] + "\n");
-                    term.echo("[B] " + selected_qnas[1]["question"] + "\n");
-                    term.echo("[C] " + selected_qnas[2]["question"] + "\n");
-
-                    // Debug
-                    term.echo("\nDebug:")
-                    term.echo("\ncorrect_answer:" + correct_answer);
-                    term.echo(selected_qnas[correct_answer]["question"]);
-                    term.echo("")
-//                    term.echo(selected_qnas[correct_answer]["answer"]);
-//                    term.echo("")
-
-//                    for (i=0; i<100; i++) {
-//                        term.echo(randomNumber(0,3));
-//                    }
-
-
-                  },
-                  error: function(data) {
-                    console.log('ajax error');
-                    console.log(data);
-                    var term = $.terminal.active()
-                    stop(term, spinner);
-                    term.echo("ajax error: " + data.status + " " + data.statusText + " for url: " + data_url);
-                  },
-                });
+                playJeopardy(this, product, stop);
             }
         }, {
             name: 'cloud_jeopardy',
