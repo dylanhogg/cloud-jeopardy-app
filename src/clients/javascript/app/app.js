@@ -141,6 +141,13 @@ $(function($, undefined) {
             }, 0);
         }
 
+        $(function() {
+            state_product = "ecr";  // TODO: make array and select sensible set.
+            var term = $.terminal.active()
+            start(term, spinner);
+            playJeopardy(term, state_product, stop);
+        });
+
         $('body').terminal({
             help: function() {
                 this.echo('Try typing "play ec2", or "play ec" and then hitting tab twice to autocomplete.');
