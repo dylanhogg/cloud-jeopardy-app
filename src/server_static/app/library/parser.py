@@ -3,7 +3,7 @@ from datetime import datetime
 from entities.qna import QnaList, Qna
 
 
-def get_hash(q, a):
+def _get_hash(q, a):
     return hashlib.md5(f"{q}_{a}".encode('utf-8')).hexdigest()
 
 
@@ -28,7 +28,7 @@ def parse_qnas(product, lines):
                 # Append previous question and answer
                 q = qn_line.replace("Q: ", "")
                 a = "\n".join(ans_lines)
-                qnas.append(Qna(id=len(qnas), question=q, answer=a, hash=get_hash(q, a)))
+                qnas.append(Qna(id=len(qnas), question=q, answer=a, hash=_get_hash(q, a)))
 
             # Start fresh question and answer
             qn_line = line
@@ -41,7 +41,7 @@ def parse_qnas(product, lines):
         a = ans_lines[0]
         # NOTE: For last question, only first line of answer is included.
         #       It's difficult to know when last answer finishes and other guff starts.
-        qnas.append(Qna(id=len(qnas), question=q, answer=a, hash=get_hash(q, a)))
+        qnas.append(Qna(id=len(qnas), question=q, answer=a, hash=_get_hash(q, a)))
 
     qna_list.qnas_count = len(qnas)
     qna_list.qnas = qnas

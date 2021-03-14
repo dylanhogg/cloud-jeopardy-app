@@ -10,7 +10,7 @@ from library import env, log, rand, rest
 
 
 def rest_client_get_qnas():
-    qnas_json = rest.get("get_qnas")
+    qnas_json = rest.get("get_qnas")["qnas"]
     return parse_obj_as(List[Qna], qnas_json)
 
 
