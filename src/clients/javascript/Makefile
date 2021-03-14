@@ -8,17 +8,23 @@ BUCKET_NAME=jeopardy-app.infocruncher.com
 
 # Local running
 
-js-client:
+## Browse local js client app
+browse-local-app:
 	cd app; python3 -m http.server 8000
+
+## Browse local js client
+browse-s3-app:
+	open http://${BUCKET_NAME}/
+
 
 # AWS Command Tools
 
 ## AWS S3 cp app to S3
-s3-cp:
+s3-deploy-app:
 	aws s3 cp app s3://${BUCKET_NAME} --recursive --profile ${AWS_PROFILE}
 
 ## AWS S3 rm static_files from S3
-s3-rm:
+s3-delete-app:
 	aws s3 rm s3://${BUCKET_NAME} --recursive
 
 ## Browse to public S3 url

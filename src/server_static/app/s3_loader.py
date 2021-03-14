@@ -35,11 +35,11 @@ def save_faq_text(crawler, product, output_path):
     print(f"Saving {product.name} FAQ from {product.abs_href_faq} to {filename}...")
     save(faq_text, filename)
 
-    qnas = parser.parse_qnas(faq_text)
-    qnas_json = [x.dict() for x in qnas]
+    qna_list = parser.parse_qnas(product, faq_text)
+    qnas_json = qna_list.dict()
     parsed_faq_text = json.dumps(qnas_json, indent=4)
     filename = os.path.join(output_path, f"{product.code}-faq.json")
-    data_error = len(qnas) < 3
+    data_error = len(qna_list.qnas) < 3
     if data_error:
         filename = filename.replace(".json", ".ERROR.json")
     save(parsed_faq_text, filename)
@@ -69,9 +69,8 @@ def main():
         else:
             success_products.append(product.code)
 
+    # output master file with all products
     save_product_results(success_products, error_products, output_path);
-
-    # TODO: output master file with all products
 
     print(f"Finished.")
 

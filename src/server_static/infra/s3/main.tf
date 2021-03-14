@@ -30,6 +30,8 @@
 //  }
 //}
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket#static-website-hosting
+
 resource "aws_s3_bucket" "s3_bucket" {
   // Bucket name must be unique and must not contain spaces, uppercase letters or underscores.
   //bucket = "${var.app_name}-${var.env}-s3-api"

@@ -8,7 +8,6 @@ function randomNumberExcluding(min, max, exclude) {
         if (exclude.length == 0 || exclude.indexOf(rnd) === -1) {
             return rnd;
         }
-        // console.log("*** randomNumberExcluding retry");
     }
 
   return Math.floor(Math.random() * (max - min) + min);
@@ -48,15 +47,13 @@ var qna_data = null;
 var qna_data_count = 0;
 var data_ready = false;
 var config_spinner_name = 'dots';
-// var config_prompt = 'cloud-jeopardy> ';
-// var config_prompt = '> ';
 var config_prompt = 'A, B or C? > ';
 
 var correct_answer = null;
 var correct_answer_display = null;
 var state_product = null;
-// var state_products = ["s3", "ecr", "ecs", "ec2", "sagemaker", "sagemakergroundtruth"];
-var state_products = ["s3", "sagemakergroundtruth"];
+var state_products = ["s3", "ecr", "ecs", "ec2", "sagemaker", "sagemakergroundtruth"];
+// var state_products = ["s3", "sagemakergroundtruth"];
 var state_correct = 0;
 var state_incorrect = 0;
 var state_total = 0;
@@ -82,7 +79,7 @@ function playJeopardy(term, products, stopSpinningFn) {
       success: function(data) {
         stopSpinningFn(term);
 
-        qna_data = data;
+        qna_data = data["qnas"];
         qna_data_count = Object.keys(qna_data).length;
         data_ready = true;
 
@@ -91,15 +88,15 @@ function playJeopardy(term, products, stopSpinningFn) {
         var idx3 = randomNumberExcluding(0, qna_data_count, [idx1, idx2]);
 
         var selected_qnas = [
-            data[idx1],
-            data[idx2],
-            data[idx3]
+            qna_data[idx1],
+            qna_data[idx2],
+            qna_data[idx3]
         ]
 
         correct_answer = randomNumber(0,3);
         correct_answer_display = ["A", "B", "C"][correct_answer];
 
-        // Display answer
+        // Display answer in ox
         var box_ans_custom = "┃ Given the " + product + " answer: ";
         for (i=box_ans_custom.length; i<box_top.length-2; i++) {
             box_ans_custom = box_ans_custom + " ";

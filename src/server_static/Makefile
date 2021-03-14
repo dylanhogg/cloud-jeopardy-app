@@ -18,24 +18,23 @@ clean:
 	rm -rf venv
 
 # TODO: rename
-
 ## Run S3 loader
-s3_loader:
+run-s3-server-static:
 	source venv/bin/activate ; PYTHONPATH='../shared:./app' python -m s3_loader
 
 
 # AWS Command Tools
 
-## AWS S3 CP files to S3
-s3-cp:
+## AWS S3 cp static_files to S3
+s3-deploy-server:
 	aws s3 cp static_files s3://${ENV}-s3-${APP_NAME} --recursive --profile ${AWS_PROFILE}
 
-## AWS S3 RM files from S3
-s3-rm:
+## AWS S3 rm static_files from S3
+s3-delete-server:
 	aws s3 rm s3://${ENV}-s3-${APP_NAME} --recursive
 
 ## Browse to public S3 url
-browse-s3:
+s3-browse:
 	open http://${ENV}-s3-${APP_NAME}.s3-website-${AWS_REGION}.amazonaws.com/
 
 
