@@ -2,9 +2,9 @@ function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+//function sleep(ms) {
+//  return new Promise(resolve => setTimeout(resolve, ms));
+//}
 
 function handleAnswer(term, answer, correct_answer) {
     if (correct_answer === null) {
@@ -32,8 +32,35 @@ function handleAnswer(term, answer, correct_answer) {
 //    term.echo('state_total =     ' + state_total);
 }
 
-function playJeopardy(term, product, stopSpinningFn) {
+var qna_data = null;
+var qna_data_count = 0;
+var data_ready = false;
+var config_spinner_name = 'dots';
+// var config_prompt = 'cloud-jeopardy> ';
+// var config_prompt = '> ';
+var config_prompt = 'A, B or C? > ';
+
+var correct_answer = null;
+var correct_answer_display = null;
+var state_product = null;
+// var state_products = ["s3", "ecr", "ecs", "ec2", "sagemaker", "sagemakergroundtruth"];
+var state_products = ["s3", "sagemakergroundtruth"];
+var state_correct = 0;
+var state_incorrect = 0;
+var state_total = 0;
+
+var box_top = "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
+var box_ans = "┃ Given the answer:              ┃\n";
+var box_qns = "┃ What was the question?         ┃\n";
+var box_cor = "┃ Correct! You legend.           ┃\n";
+var box_wro = "┃ Wrong, sorry.                  ┃\n";
+var box_btm = "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
+
+function playJeopardy(term, products, stopSpinningFn) {
     data_ready = false;
+
+    product_idx = randomNumber(0, products.length);
+    product = products[product_idx];
     data_url = "https://prd-s3-cloud-jeopardy-api.s3.amazonaws.com/faqs/" + product + "-faq.json";
 
     $.ajax({
@@ -46,7 +73,6 @@ function playJeopardy(term, product, stopSpinningFn) {
         qna_data = data;
         qna_data_count = Object.keys(qna_data).length;
         data_ready = true;
-        product_name = product;
 
         var idx1 = randomNumber(0, qna_data_count);
         var idx2 = randomNumber(0, qna_data_count);  // TODO: exclude prev 1
@@ -62,7 +88,19 @@ function playJeopardy(term, product, stopSpinningFn) {
         correct_answer_display = ["A", "B", "C"][correct_answer];
 
         // Display answer
-        term.echo(box_top + box_ans + box_btm);
+        var box_ans_custom = "┃ Given the " + product + " answer: ";
+        for (i=box_ans_custom.length; i<box_top.length-2; i++) {
+            box_ans_custom = box_ans_custom + " ";
+        }
+        box_ans_custom = box_ans_custom + "┃\n";
+        var box_top_custom = "┏";
+        for (i=0; i<box_ans_custom.length-4; i++) {
+            box_top_custom = box_top_custom + "━";
+        }
+        box_top_custom = box_top_custom + "━┓\n";
+        box_btm_custom = box_top_custom.replace("┏", "┗").replace("┓", "┛");
+
+        term.echo(box_top_custom + box_ans_custom + box_btm_custom);
         term.echo(selected_qnas[correct_answer]["answer"]);
 
         // Display options
@@ -86,29 +124,6 @@ function playJeopardy(term, product, stopSpinningFn) {
     });
 }
 
-var qna_data = null;
-var qna_data_count = 0;
-var data_ready = false;
-var product_name = null;
-var config_spinner_name = 'dots';
-// var config_prompt = 'cloud-jeopardy> ';
-// var config_prompt = '> ';
-var config_prompt = 'A, B or C? > ';
-
-var correct_answer = null;
-var correct_answer_display = null;
-var state_product = null;
-var state_correct = 0;
-var state_incorrect = 0;
-var state_total = 0;
-
-var box_top = "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
-var box_ans = "┃ Given the answer:              ┃\n";
-var box_qns = "┃ What was the question?         ┃\n";
-var box_cor = "┃ Correct!                       ┃\n";
-var box_wro = "┃ Wrong, sorry.                  ┃\n";
-var box_btm = "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
-
 $(function($, undefined) {
     var spinners_url = 'spinners.json';
     $.getJSON(spinners_url, function(spinners) {
@@ -116,7 +131,6 @@ $(function($, undefined) {
         var timer;
         var prompt;
         var i;
-
         var spinner = spinners[config_spinner_name];
 
         function start(term, spinner) {
@@ -142,10 +156,10 @@ $(function($, undefined) {
         }
 
         $(function() {
-            state_product = "ecr";  // TODO: make array and select sensible set.
+            // state_product = "ecr";  // TODO: make array and select sensible set.
             var term = $.terminal.active()
             start(term, spinner);
-            playJeopardy(term, state_product, stop);
+            playJeopardy(term, state_products, stop);
         });
 
         $('body').terminal({
@@ -155,7 +169,7 @@ $(function($, undefined) {
             a: function() {
                 handleAnswer(this, 0, correct_answer);
                 start(this, spinner);
-                playJeopardy(this, state_product, stop);
+                playJeopardy(this, state_products, stop);
 //                sleep(2000).then(() => {
 //                    // Do something after the sleep!
 //                    playJeopardy(this, state_product, stop);
@@ -164,32 +178,32 @@ $(function($, undefined) {
             A: function() {
                 handleAnswer(this, 0, correct_answer);
                 start(this, spinner);
-                playJeopardy(this, state_product, stop);
+                playJeopardy(this, state_products, stop);
             },
             b: function() {
                 handleAnswer(this, 1, correct_answer);
                 start(this, spinner);
-                playJeopardy(this, state_product, stop);
+                playJeopardy(this, state_products, stop);
             },
             B: function() {
                 handleAnswer(this, 1, correct_answer);
                 start(this, spinner);
-                playJeopardy(this, state_product, stop);
+                playJeopardy(this, state_products, stop);
             },
             c: function() {
                 handleAnswer(this, 2, correct_answer);
                 start(this, spinner);
-                playJeopardy(this, state_product, stop);
+                playJeopardy(this, state_products, stop);
             },
             C: function() {
                 handleAnswer(this, 2, correct_answer);
                 start(this, spinner);
-                playJeopardy(this, state_product, stop);
+                playJeopardy(this, state_products, stop);
             },
             play: function(product) {
-                state_product = product;
+                state_products = [product];
                 start(this, spinner);
-                playJeopardy(this, product, stop);
+                playJeopardy(this, state_products, stop);
             }
         }, {
             name: 'cloud_jeopardy',
