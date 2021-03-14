@@ -1,4 +1,16 @@
 function randomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+}
+
+function randomNumberExcluding(min, max, exclude) {
+    while (true) {
+        var rnd = Math.floor(Math.random() * (max - min) + min);
+        if (exclude.length == 0 || exclude.indexOf(rnd) === -1) {
+            return rnd;
+        }
+        // console.log("*** randomNumberExcluding retry");
+    }
+
   return Math.floor(Math.random() * (max - min) + min);
 }
 
@@ -74,9 +86,9 @@ function playJeopardy(term, products, stopSpinningFn) {
         qna_data_count = Object.keys(qna_data).length;
         data_ready = true;
 
-        var idx1 = randomNumber(0, qna_data_count);
-        var idx2 = randomNumber(0, qna_data_count);  // TODO: exclude prev 1
-        var idx3 = randomNumber(0, qna_data_count);  // TODO: exclude prev 2
+        var idx1 = randomNumberExcluding(0, qna_data_count, []);
+        var idx2 = randomNumberExcluding(0, qna_data_count, [idx1]);
+        var idx3 = randomNumberExcluding(0, qna_data_count, [idx1, idx2]);
 
         var selected_qnas = [
             data[idx1],
@@ -98,7 +110,7 @@ function playJeopardy(term, products, stopSpinningFn) {
             box_top_custom = box_top_custom + "━";
         }
         box_top_custom = box_top_custom + "━┓\n";
-        box_btm_custom = box_top_custom.replace("┏", "┗").replace("┓", "┛");
+        box_btm_custom = box_top_custom.replace("┏", "┗").replace("┓", "┛").replace("\n", "");
 
         term.echo(box_top_custom + box_ans_custom + box_btm_custom);
         term.echo(selected_qnas[correct_answer]["answer"]);
