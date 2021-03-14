@@ -13,10 +13,6 @@ function randomNumberExcluding(min, max, exclude) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-//function sleep(ms) {
-//  return new Promise(resolve => setTimeout(resolve, ms));
-//}
-
 function handleAnswer(term, answer, correct_answer) {
     if (correct_answer === null) {
         term.echo('Game has not started.');
@@ -32,7 +28,7 @@ function handleAnswer(term, answer, correct_answer) {
         term.echo('The correct answer was [' + correct_answer_display  + ']');
     }
 
-    term.echo('Score: ' + state_correct + '/' + state_total);
+    term.echo('Your score: ' + state_correct + '/' + state_total);
     term.echo('');
 
 //    term.echo("DEBUG:");
@@ -43,6 +39,7 @@ function handleAnswer(term, answer, correct_answer) {
 //    term.echo('state_total =     ' + state_total);
 }
 
+var version = "Cloud Jeopardy v0.0.1";
 var qna_data = null;
 var qna_data_count = 0;
 var data_ready = false;
@@ -52,8 +49,10 @@ var config_prompt = 'A, B or C? > ';
 var correct_answer = null;
 var correct_answer_display = null;
 var state_product = null;
-var state_products = ["s3", "ecr", "ecs", "ec2", "sagemaker", "sagemakergroundtruth"];
-// var state_products = ["s3", "sagemakergroundtruth"];
+var state_products = ["s3", "ecr", "ecs", "ec2", "elasticache", "rds", "elasticmapreduce", "route53",
+                        "lambda", "sagemaker", "sagemakergroundtruth", "sns", "sqs", "vpc", "kinesis",
+                        "directconnect", "cloudwatch", "cloudfront", "iam", "redshift", "athena", "efs",
+                        "glue", "rdsaurora", "iot-core", "systems-manager", "eks", "cognito", "dynamodb"];
 var state_correct = 0;
 var state_incorrect = 0;
 var state_total = 0;
@@ -96,7 +95,7 @@ function playJeopardy(term, products, stopSpinningFn) {
         correct_answer = randomNumber(0,3);
         correct_answer_display = ["A", "B", "C"][correct_answer];
 
-        // Display answer in ox
+        // Display answer box
         var box_ans_custom = "┃ Given the " + product + " answer: ";
         for (i=box_ans_custom.length; i<box_top.length-2; i++) {
             box_ans_custom = box_ans_custom + " ";
@@ -110,19 +109,19 @@ function playJeopardy(term, products, stopSpinningFn) {
         box_btm_custom = box_top_custom.replace("┏", "┗").replace("┓", "┛").replace("\n", "");
 
         term.echo(box_top_custom + box_ans_custom + box_btm_custom);
-        term.echo(selected_qnas[correct_answer]["answer"]);
+
+        var _color = "[[;#ccc;]";
+        var color_ = "]";
+
+        // Display answer text
+        term.echo(_color + selected_qnas[correct_answer]["answer"] + color_);
 
         // Display options
+        term.echo("");
         term.echo(box_top + box_qns + box_btm);
-        term.echo("[A] " + selected_qnas[0]["question"] + "\n");
-        term.echo("[B] " + selected_qnas[1]["question"] + "\n");
-        term.echo("[C] " + selected_qnas[2]["question"] + "\n");
-
-        // Debug
-//        term.echo("\nDebug:")
-//        term.echo("\ncorrect_answer:" + correct_answer);
-//        term.echo(selected_qnas[correct_answer]["question"]);
-//        term.echo("")
+        term.echo(_color + "(A) " + selected_qnas[0]["question"] + color_ + "\n");
+        term.echo(_color + "(B) " + selected_qnas[1]["question"] + color_ + "\n");
+        term.echo(_color + "(C) " + selected_qnas[2]["question"] + color_ + "\n");
       },
       error: function(data) {
         console.log('ajax error');
@@ -175,14 +174,13 @@ $(function($, undefined) {
             help: function() {
                 this.echo('Try typing "play ec2", or "play ec" and then hitting tab twice to autocomplete.');
             },
+            version: function() {
+                this.echo(version);
+            },
             a: function() {
                 handleAnswer(this, 0, correct_answer);
                 start(this, spinner);
                 playJeopardy(this, state_products, stop);
-//                sleep(2000).then(() => {
-//                    // Do something after the sleep!
-//                    playJeopardy(this, state_product, stop);
-//                });
             },
             A: function() {
                 handleAnswer(this, 0, correct_answer);
@@ -221,7 +219,7 @@ $(function($, undefined) {
                 'An AWS Certification study tool - select the correct question for the given AWS FAQ answer, Jeopardy style.\n',
             scrollOnEcho: true,
             completion: function(command, callback) {
-                var utils = ['help', 'status', 'play'];
+                var utils = ['help', 'status', 'play', 'version'];
                 var products = ['amazon-mq','amplify','api-gateway','app-mesh','app2container','appflow','application-discovery','appstream2','appsync','athena','audit-manager','augmented-ai','autoscaling','aws-transfer-family','backup','batch','braket','cdk','certificate-manager','chatbot','chime','cloud9','cloudformation','cloudfront','cloudhsm','cloudsearch','cloudshell','cloudtrail','cloudwatch','codebuild','codecommit','codedeploy','codeguru','codepipeline','codestar','cognito','comprehend','compute-optimizer','config','connect','console','consolemobile','containerscopilot','corretto','datapipeline','datasync','deepcomposer','deeplens','deepracer','detective','device-farm','devops-guru','directconnect','directoryservice','dms','documentdb','dynamodb','ebs','ec2','ec2autoscaling','ecr','ecs','efs','eks','ekseks-anywhere','ekseks-distro','elasticache','elasticbeanstalk','elasticloadbalancing','elasticmapreduce','elasticsearch-service','elastictranscoder','eventbridge','fargate','fis','forecast','fraud-detector','freertos','fsxlustre','fsxwindows','gamelift','global-accelerator','glue','grafana','ground-station','guardduty','iam','iot-analytics','iot-core','iot-device-defender','iot-device-management','iot-events','iot-sitewise','iot-things-graph','kendra','keyspaces','kinesis','kinesisvideo-streams','kms','lake-formation','lambda','lex','license-manager','lightsail','location','lookout-for-equipment','lookout-for-metrics','lookout-for-vision','lumberyard','machine-learningcontainers','macie','managed-blockchain','managed-workflows-for-apache-airflow','migration-evaluator','migration-hub','monitron','msk','neptune','network-firewall','opsworks','organizations','otel','outposts','panorama','personalize','pinpoint','polly','privatelink','prometheus','proton','qldb','quicksight','ram','rds','rdsaurora','rdsvmware','redshift','rekognition','robomaker','route53','s3','sagemaker','sagemakergroundtruth','security-hub','server-migration-service','servicecatalog','ses','shield','snow','sns','sqs','step-functions','storagegateway','sumerian','systems-manager','textract','timestream','transcribe','transit-gateway','translate','vpc','well-architected-tool','workdocs','worklink','workmail','workspaces','xray'];
                 callback([].concat(utils, products));
             },

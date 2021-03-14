@@ -1,5 +1,5 @@
 .terminal,span,.cmd,div {
-    --color: rgba(0, 128, 0, 0.99);
+    --color: #32CD32;
 }
 .terminal, span {
     --size: 1.4;
