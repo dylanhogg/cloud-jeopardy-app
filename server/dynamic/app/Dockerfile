@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED 1
 
 # copy server app
 # TODO: use requirements_freeze.txt here
-COPY ./server/app/requirements.txt /usr/src/app/
+COPY ./app/requirements.txt /usr/src/app/
 
 # install dependencies
 RUN set -eux \
@@ -22,11 +22,8 @@ RUN set -eux \
     && pip install -r /usr/src/app/requirements.txt \
     && rm -rf /root/.cache/pip
 
-# copy shared entities
-COPY ./shared /usr/src/app/
-
 # copy server app
-COPY ./server/app /usr/src/app/
+COPY ./app /usr/src/app/
 
 # TODO: EXPOSE needed ???
 EXPOSE 8000

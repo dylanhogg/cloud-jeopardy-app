@@ -1,6 +1,7 @@
 import os
 import json
 import datetime
+import pathlib
 import typer
 from loguru import logger
 from library import parser
@@ -8,6 +9,9 @@ from cloud_products.aws import AwsCrawler
 
 
 def save(obj, filename) -> None:
+    filepath = pathlib.Path(filename)
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+
     with open(filename, "w") as f:
         f.write(str(obj))
 
@@ -47,6 +51,14 @@ def save_faq_text(crawler, product, output_path):
     return data_error
 
 
+def create_system_pages(path):
+    with open(path + "error.html", "w") as f:
+        f.write("error")
+
+    with open(path + "index.html", "w") as f:
+        f.write("index")
+
+
 def main():
     logger.info("Run full AWS Crawler and load to S3...")
 
@@ -54,7 +66,8 @@ def main():
     products = crawler.get_products()
     print(f"Found {len(products)} products.")
 
-    output_path = "./static_files/faqs/"
+    create_system_pages("./.generated_files/")
+    output_path = "./.generated_files/faqs/"
 
     success_products = []
     error_products = []

@@ -26,12 +26,15 @@ function handleAnswer(term, answer, correct_answer) {
         state_total++;
         term.echo(box_top + box_wro + box_btm);
         term.echo('The correct answer was (' + correct_answer_display  + ')');
+        term.echo('TODO: link to faq page...');
     }
 
     term.echo('Your score: ' + state_correct + '/' + state_total);
     term.echo('');
 
-//    term.echo("DEBUG:");
+    term.echo("DEBUG:");
+    term.echo("state_qnas = " + state_qnas);
+
 //    term.echo('answer =          ' + answer);
 //    term.echo('correct_answer =  ' + correct_answer);
 //    term.echo('state_correct =   ' + state_correct);
@@ -64,6 +67,7 @@ var state_products = ["s3", "ecr", "ecs", "ec2", "elasticache", "rds", "elasticm
 var state_correct = 0;
 var state_incorrect = 0;
 var state_total = 0;
+var state_qnas = [];
 
 var box_top = "┌────────────────────────────────┐\n";
 var box_ans = "│ Given the answer:              │\n";
@@ -121,12 +125,14 @@ function playJeopardy(term, products, stopSpinningFn) {
         // Display answer text
         term.echo(_color("#ccc") + selected_qnas[correct_answer]["answer"] + color_());
 
-        // Display options
+        // Display question text options
         term.echo("");
         term.echo(box_top + box_qns + box_btm);
         term.echo(_color("#ccc") + "(A) " + selected_qnas[0]["question"] + color_() + "\n");
         term.echo(_color("#ccc") + "(B) " + selected_qnas[1]["question"] + color_() + "\n");
         term.echo(_color("#ccc") + "(C) " + selected_qnas[2]["question"] + color_() + "\n");
+
+        state_qnas.push(selected_qnas[correct_answer]["hash"]);
       },
       error: function(data) {
         console.log('ajax error');

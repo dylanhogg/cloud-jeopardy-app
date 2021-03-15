@@ -1,0 +1,4 @@
+.cloud-products-cache/
+.generated_files/
+static_files/
+venv/

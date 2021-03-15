@@ -12,18 +12,25 @@
     1) X Game loop
     1) X Randomise answer
     1) X No repeats in a single game
-    1) UI menu/press any key/font from: https://projectaon.org/staff/christian/gamebook.js/
-    1) Ensure no repeats in a session
-    1) Scoring display (maybe fake high score to start with?)
+    1) X Ensure google analytics set up ok
     1) Move into cleaner, public repo with js client and s3 infra (maybe include ecs infra also?)
+        1) Test static server app and tf
+        1) Test dynamic server app and tf
+        1) Test js client tf
+        1) Write tests
+        1) Check github workflow ok
+    1) Set up cloudfront with https on app and api - https://channaly.medium.com/how-to-host-static-website-with-https-using-amazon-s3-251434490c59
+    1) Ensure no repeats in a session
     1) Work out product sets for different certification paths
     1) UX for product sets (how to select, discover, customise?)
     1) Help info
-    1) Good intro + instructions
+    1) Good intro + instructions   
+    1) Python Typing
+    1) UI menu/press any key/font from: https://projectaon.org/staff/christian/gamebook.js/
+    1) Scoring display (maybe fake high score to start with?)
     1) Ability to select products?
     1) Display product for question?
     1) Add favicon
-    1) X Ensure google analytics set up ok
     1) Test mobile safari
     1) Google speed: https://developers.google.com/speed/pagespeed/insights/?url=http%3A%2F%2Fjeopardy-app.infocruncher.com%2F
     1)
@@ -32,7 +39,7 @@
     1) Fix Yes. No. questions
     1) Fix errored crawl products
     1) Add missing product crawls, esp sub-products
-    1) Review data_errors.mg
+    1) Review data_errors.md
     1) Add simple product, entity recogition
     1) Mask NER products from questions?
     

@@ -4,6 +4,19 @@ AWS_PROFILE=prd-non-tf-905234897161
 AWS_ACCOUNT_ID=905234897161
 AWS_REGION=us-east-1
 
+## Run unit tests
+test:
+	source venv/bin/activate ; PYTHONPATH='./app' pytest -vvv -s
+
+## Run black code formatter
+black:
+	source venv/bin/activate ; black  --line-length 120 .
+
+## Run flake8 linter
+flake8:
+	source venv/bin/activate ; flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+	source venv/bin/activate ; flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
 # Docker compose
 
 ## Clean python cache
