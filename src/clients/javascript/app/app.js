@@ -25,7 +25,7 @@ function handleAnswer(term, answer, correct_answer) {
         state_incorrect++;
         state_total++;
         term.echo(box_top + box_wro + box_btm);
-        term.echo('The correct answer was [' + correct_answer_display  + ']');
+        term.echo('The correct answer was (' + correct_answer_display  + ')');
     }
 
     term.echo('Your score: ' + state_correct + '/' + state_total);
@@ -37,6 +37,14 @@ function handleAnswer(term, answer, correct_answer) {
 //    term.echo('state_correct =   ' + state_correct);
 //    term.echo('state_incorrect = ' + state_incorrect);
 //    term.echo('state_total =     ' + state_total);
+}
+
+function _color(c) {
+    return "[[;" + c + ";]"
+}
+
+function color_() {
+    return "]";
 }
 
 var version = "Cloud Jeopardy v0.0.1";
@@ -60,8 +68,8 @@ var state_total = 0;
 var box_top = "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
 var box_ans = "┃ Given the answer:              ┃\n";
 var box_qns = "┃ What was the question?         ┃\n";
-var box_cor = "┃ Correct! You legend.           ┃\n";
-var box_wro = "┃ Wrong, sorry.                  ┃\n";
+var box_cor = "┃ [[;white;]✓] Correct! You legend.         ┃\n";
+var box_wro = "┃ [[;red;]𐄂] Wrong, sorry.                ┃\n";
 var box_btm = "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
 
 function playJeopardy(term, products, stopSpinningFn) {
@@ -110,18 +118,15 @@ function playJeopardy(term, products, stopSpinningFn) {
 
         term.echo(box_top_custom + box_ans_custom + box_btm_custom);
 
-        var _color = "[[;#ccc;]";
-        var color_ = "]";
-
         // Display answer text
-        term.echo(_color + selected_qnas[correct_answer]["answer"] + color_);
+        term.echo(_color("#ccc") + selected_qnas[correct_answer]["answer"] + color_());
 
         // Display options
         term.echo("");
         term.echo(box_top + box_qns + box_btm);
-        term.echo(_color + "(A) " + selected_qnas[0]["question"] + color_ + "\n");
-        term.echo(_color + "(B) " + selected_qnas[1]["question"] + color_ + "\n");
-        term.echo(_color + "(C) " + selected_qnas[2]["question"] + color_ + "\n");
+        term.echo(_color("#ccc") + "(A) " + selected_qnas[0]["question"] + color_() + "\n");
+        term.echo(_color("#ccc") + "(B) " + selected_qnas[1]["question"] + color_() + "\n");
+        term.echo(_color("#ccc") + "(C) " + selected_qnas[2]["question"] + color_() + "\n");
       },
       error: function(data) {
         console.log('ajax error');
