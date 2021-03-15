@@ -65,12 +65,12 @@ var state_correct = 0;
 var state_incorrect = 0;
 var state_total = 0;
 
-var box_top = "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
-var box_ans = "┃ Given the answer:              ┃\n";
-var box_qns = "┃ What was the question?         ┃\n";
-var box_cor = "┃ [[;white;]✓] Correct! You legend.         ┃\n";
-var box_wro = "┃ [[;red;]𐄂] Wrong, sorry.                ┃\n";
-var box_btm = "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
+var box_top = "┌────────────────────────────────┐\n";
+var box_ans = "│ Given the answer:              │\n";
+var box_qns = "│ What was the question?         │\n";
+var box_cor = "│ [[;white;]✓] Correct! You legend.         │\n";
+var box_wro = "│ [[;red;]𐄂] Wrong, sorry.                │\n";
+var box_btm = "└────────────────────────────────┘";
 
 function playJeopardy(term, products, stopSpinningFn) {
     data_ready = false;
@@ -104,17 +104,17 @@ function playJeopardy(term, products, stopSpinningFn) {
         correct_answer_display = ["A", "B", "C"][correct_answer];
 
         // Display answer box
-        var box_ans_custom = "┃ Given the " + product + " answer: ";
+        var box_ans_custom = "│ Given the " + product + " answer: ";
         for (i=box_ans_custom.length; i<box_top.length-2; i++) {
             box_ans_custom = box_ans_custom + " ";
         }
-        box_ans_custom = box_ans_custom + "┃\n";
-        var box_top_custom = "┏";
-        for (i=0; i<box_ans_custom.length-4; i++) {
-            box_top_custom = box_top_custom + "━";
+        box_ans_custom = box_ans_custom + "│\n";
+        var box_top_custom = "┌";
+        for (i=0; i<box_ans_custom.length-3; i++) {
+            box_top_custom = box_top_custom + "─";
         }
-        box_top_custom = box_top_custom + "━┓\n";
-        box_btm_custom = box_top_custom.replace("┏", "┗").replace("┓", "┛").replace("\n", "");
+        box_top_custom = box_top_custom + "┐\n";
+        box_btm_custom = box_top_custom.replace("┌", "└").replace("┐", "┘").replace("\n", "");
 
         term.echo(box_top_custom + box_ans_custom + box_btm_custom);
 
