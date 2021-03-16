@@ -1,5 +1,0 @@
--r requirements.txt
-fastapi[dev]
-pytest
-black
-flake8
