@@ -19,12 +19,14 @@
         1) Test js client tf
         1) Write tests
         1) Check github workflow ok
+    1) html metadata, desc, tags, graphql?
     1) Set up cloudfront with https on app and api - https://channaly.medium.com/how-to-host-static-website-with-https-using-amazon-s3-251434490c59
     1) Ensure no repeats in a session
     1) Work out product sets for different certification paths
     1) UX for product sets (how to select, discover, customise?)
     1) Help info
-    1) Good intro + instructions   
+    1) Good intro + instructions  
+    1) Set up eth donation address?
     1) Python Typing
     1) UI menu/press any key/font from: https://projectaon.org/staff/christian/gamebook.js/
     1) Scoring display (maybe fake high score to start with?)
@@ -36,6 +38,7 @@
     1)
     
 1) Data
+    1) Consolidate json data with publicdata.infocruncher.com? (what about monitoring tho?)
     1) Fix Yes. No. questions
     1) Fix errored crawl products
     1) Add missing product crawls, esp sub-products
