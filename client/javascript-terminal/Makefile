@@ -10,7 +10,7 @@ BUCKET_NAME=jeopardy-app.infocruncher.com
 
 ## Browse local js client app
 browse-local-app:
-	cd app; python3 -m http.server 8000
+	cd app; python3 -m http.server 8001
 
 ## Browse local js client
 browse-s3-app:

@@ -4,9 +4,20 @@ AWS_PROFILE=prd-non-tf-905234897161
 AWS_ACCOUNT_ID=905234897161
 AWS_REGION=us-east-1
 
+## Create virtual environment
+.PHONY: venv
+venv:
+	python3 -m venv venv
+	source venv/bin/activate ; pip install --upgrade pip ; python3 -m pip install -r requirements-dev.txt
+	source venv/bin/activate ; pip freeze > requirements_freeze.txt
+
+## Clean virtual environment
+clean:
+	rm -rf venv
+
 ## Run unit tests
 test:
-	source venv/bin/activate ; PYTHONPATH='./app' pytest -vvv -s
+	source venv/bin/activate ; PYTHONPATH='./app:./tests' pytest -vvv -s
 
 ## Run black code formatter
 black:
@@ -56,8 +67,8 @@ push: aws-ecr-login tag
 
 ## Docker run locally
 run:
+	open http://0.0.0.0:8000/get_qnas
 	docker run -it -p 8000:8000 cloud-jeopardy-api_server
-	#docker run -it -p 8000:80 --entrypoint /bin/sh cloud-jeopardy-api_server
 
 # AWS
 

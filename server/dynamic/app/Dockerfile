@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED 1
 
 # copy server app
 # TODO: use requirements_freeze.txt here
-COPY ./app/requirements.txt /usr/src/app/
+COPY ./requirements.txt /usr/src/app/
 
 # install dependencies
 RUN set -eux \
@@ -24,9 +24,6 @@ RUN set -eux \
 
 # copy server app
 COPY ./app /usr/src/app/
-
-# TODO: EXPOSE needed ???
-EXPOSE 8000
 
 RUN chmod +x /usr/src/app/run.sh
 
