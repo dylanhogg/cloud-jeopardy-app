@@ -4,6 +4,7 @@ AWS_PROFILE=prd-non-tf-905234897161
 AWS_ACCOUNT_ID=905234897161
 AWS_REGION=us-east-1
 
+
 ## Create virtual environment
 .PHONY: venv
 venv:
@@ -80,6 +81,9 @@ aws-ecr-login:
 aws-ecr-list:
 	aws ecr list-images --repository-name=${DOCKER_COMPOSE_PROJECT_NAME}_server --region=${AWS_REGION}
 
+## AWS ELB describe load balancers
+describe-load-balancers:
+    aws elbv2 describe-load-balancers --profile ${AWS_PROFILE}
 
 # Terraform
 

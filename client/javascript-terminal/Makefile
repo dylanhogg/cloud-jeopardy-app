@@ -8,13 +8,17 @@ BUCKET_NAME=jeopardy-app.infocruncher.com
 
 # Local running
 
-## Browse local js client app
-browse-local-app:
+## Serve local js client app
+Serve-local-app:
 	cd app; python3 -m http.server 8001
 
 ## Browse local js client
 browse-s3-app:
 	open http://${BUCKET_NAME}/
+
+## Browse to public S3 url
+browse-s3:
+    open http://${BUCKET_NAME}.s3-website-${AWS_REGION}.amazonaws.com/
 
 
 # AWS Command Tools
@@ -26,10 +30,6 @@ s3-deploy-app:
 ## AWS S3 rm static_files from S3
 s3-delete-app:
 	aws s3 rm s3://${BUCKET_NAME} --recursive
-
-## Browse to public S3 url
-browse-s3:
-	open http://${BUCKET_NAME}.s3-website-${AWS_REGION}.amazonaws.com/
 
 
 # Terraform

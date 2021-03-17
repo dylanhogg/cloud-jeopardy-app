@@ -17,10 +17,9 @@ venv:
 clean:
 	rm -rf venv
 
-# TODO: rename
-## Run S3 loader
-run-s3-server-static:
-	source venv/bin/activate ; PYTHONPATH='./app' python -m s3_loader
+## Run static file generator
+static-file-generator:
+	source venv/bin/activate ; PYTHONPATH='./app' python -m static_file_generator
 
 ## Run unit tests
 test:
