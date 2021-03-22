@@ -13,6 +13,7 @@ class QnaList(BaseModel):
     product_code: str
     product_name: str
     product_desc: str
+    product_href: str
     date: str
     qnas_count: int
     qnas: List[Qna]

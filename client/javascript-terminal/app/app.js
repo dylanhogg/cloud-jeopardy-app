@@ -1,3 +1,32 @@
+var version = "Cloud Jeopardy v0.0.1";
+var qna_data = null;
+var qna_data_count = 0;
+var data_ready = false;
+var config_spinner_name = 'dots';
+var config_prompt = 'A, B or C? > ';
+var config_prompt_paused = '[press any key]';
+
+var correct_answer = null;
+var correct_answer_display = null;
+var state_product = null;
+var state_product_name = null;
+var state_product_href = null;
+var state_products = ["s3", "ecr", "ecs", "ec2", "elasticache", "rds", "elasticmapreduce", "route53",
+                        "lambda", "sagemaker", "sagemakergroundtruth", "sns", "sqs", "vpc", "kinesis",
+                        "directconnect", "cloudwatch", "cloudfront", "iam", "redshift", "athena", "efs",
+                        "glue", "rdsaurora", "iot-core", "systems-manager", "eks", "cognito", "dynamodb"];
+var state_correct = 0;
+var state_incorrect = 0;
+var state_total = 0;
+var state_qnas = [];
+
+var box_top = "┌────────────────────────────────┐\n";
+// var box_ans = "│ Given the answer:              │\n";
+var box_qns = "│ What was the question?         │\n";
+var box_cor = "│ [[;white;]✓] Correct! You legend.         │\n";
+var box_wro = "│ [[;red;]𐄂] Wrong, sorry.                │\n";
+var box_btm = "└────────────────────────────────┘";
+
 function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
@@ -25,15 +54,19 @@ function handleAnswer(term, answer, correct_answer) {
         state_incorrect++;
         state_total++;
         term.echo(box_top + box_wro + box_btm);
-        term.echo('The correct answer was (' + correct_answer_display  + ')');
-        term.echo('TODO: link to faq page...');
-    }
+        term.echo('Correct answer: ' + correct_answer_display  + '.');
+        // term.echo('More info: ' + state_product_href);
+        term.echo(state_product_name + ' docs: ' + state_product_href);
 
-    term.echo('Your score: ' + state_correct + '/' + state_total);
+    }
+    term.echo('Your score: ' + state_correct + ' of ' + state_total);
     term.echo('');
 
-    term.echo("DEBUG:");
-    term.echo("state_qnas = " + state_qnas);
+    term.set_prompt(config_prompt_paused);
+    return true;
+
+//    term.echo("DEBUG:");
+//    term.echo("state_qnas = " + state_qnas);
 
 //    term.echo('answer =          ' + answer);
 //    term.echo('correct_answer =  ' + correct_answer);
@@ -50,32 +83,6 @@ function color_() {
     return "]";
 }
 
-var version = "Cloud Jeopardy v0.0.1";
-var qna_data = null;
-var qna_data_count = 0;
-var data_ready = false;
-var config_spinner_name = 'dots';
-var config_prompt = 'A, B or C? > ';
-
-var correct_answer = null;
-var correct_answer_display = null;
-var state_product = null;
-var state_products = ["s3", "ecr", "ecs", "ec2", "elasticache", "rds", "elasticmapreduce", "route53",
-                        "lambda", "sagemaker", "sagemakergroundtruth", "sns", "sqs", "vpc", "kinesis",
-                        "directconnect", "cloudwatch", "cloudfront", "iam", "redshift", "athena", "efs",
-                        "glue", "rdsaurora", "iot-core", "systems-manager", "eks", "cognito", "dynamodb"];
-var state_correct = 0;
-var state_incorrect = 0;
-var state_total = 0;
-var state_qnas = [];
-
-var box_top = "┌────────────────────────────────┐\n";
-var box_ans = "│ Given the answer:              │\n";
-var box_qns = "│ What was the question?         │\n";
-var box_cor = "│ [[;white;]✓] Correct! You legend.         │\n";
-var box_wro = "│ [[;red;]𐄂] Wrong, sorry.                │\n";
-var box_btm = "└────────────────────────────────┘";
-
 function playJeopardy(term, products, stopSpinningFn) {
     data_ready = false;
 
@@ -89,6 +96,10 @@ function playJeopardy(term, products, stopSpinningFn) {
       cache: false,
       success: function(data) {
         stopSpinningFn(term);
+
+        state_product_name = data["product_name"];
+        state_product_href = data["product_href"];
+//        state_product_desc = data["product_desc"];
 
         qna_data = data["qnas"];
         qna_data_count = Object.keys(qna_data).length;
@@ -108,7 +119,8 @@ function playJeopardy(term, products, stopSpinningFn) {
         correct_answer_display = ["A", "B", "C"][correct_answer];
 
         // Display answer box
-        var box_ans_custom = "│ Given the " + product + " answer: ";
+        var box_ans_custom = "│ " + (state_total+1) + ". " + state_product_name + " answer: ";
+
         for (i=box_ans_custom.length; i<box_top.length-2; i++) {
             box_ans_custom = box_ans_custom + " ";
         }
@@ -128,9 +140,9 @@ function playJeopardy(term, products, stopSpinningFn) {
         // Display question text options
         term.echo("");
         term.echo(box_top + box_qns + box_btm);
-        term.echo(_color("#ccc") + "(A) " + selected_qnas[0]["question"] + color_() + "\n");
-        term.echo(_color("#ccc") + "(B) " + selected_qnas[1]["question"] + color_() + "\n");
-        term.echo(_color("#ccc") + "(C) " + selected_qnas[2]["question"] + color_() + "\n");
+        term.echo(_color("#ccc") + "A. " + selected_qnas[0]["question"] + color_() + "\n");
+        term.echo(_color("#ccc") + "B. " + selected_qnas[1]["question"] + color_() + "\n");
+        term.echo(_color("#ccc") + "C. " + selected_qnas[2]["question"] + color_() + "\n");
 
         state_qnas.push(selected_qnas[correct_answer]["hash"]);
       },
@@ -147,6 +159,7 @@ $(function($, undefined) {
     var spinners_url = 'spinners.json';
     $.getJSON(spinners_url, function(spinners) {
         var animation = false;
+        var waitForKeyDown = true;
         var timer;
         var prompt;
         var i;
@@ -156,7 +169,7 @@ $(function($, undefined) {
             animation = true;
             i = 0;
             function set() {
-                var text = spinner.frames[i++ % spinner.frames.length];
+                var text = "loading " + spinner.frames[i++ % spinner.frames.length];
                 term.set_prompt(text);
             };
             prompt = term.get_prompt();
@@ -168,18 +181,19 @@ $(function($, undefined) {
         function stop(term) {
             setTimeout(function() {
                 clearInterval(timer);
-                term.set_prompt(prompt);
+                // term.set_prompt(prompt);
+                term.set_prompt(config_prompt);
                 animation = false;
                 term.find('.cursor').show();
             }, 0);
         }
 
-        $(function() {
-            // state_product = "ecr";  // TODO: make array and select sensible set.
-            var term = $.terminal.active()
-            start(term, spinner);
-            playJeopardy(term, state_products, stop);
-        });
+//        $(function() {
+//            // state_product = "ecr";  // TODO: make array and select sensible set.
+//            var term = $.terminal.active()
+//            start(term, spinner);
+//            playJeopardy(term, state_products, stop);
+//        });
 
         $('body').terminal({
             help: function() {
@@ -189,34 +203,22 @@ $(function($, undefined) {
                 this.echo(version);
             },
             a: function() {
-                handleAnswer(this, 0, correct_answer);
-                start(this, spinner);
-                playJeopardy(this, state_products, stop);
+                waitForKeyDown = handleAnswer(this, 0, correct_answer);
             },
             A: function() {
-                handleAnswer(this, 0, correct_answer);
-                start(this, spinner);
-                playJeopardy(this, state_products, stop);
+                waitForKeyDown = handleAnswer(this, 0, correct_answer);
             },
             b: function() {
-                handleAnswer(this, 1, correct_answer);
-                start(this, spinner);
-                playJeopardy(this, state_products, stop);
+                waitForKeyDown = handleAnswer(this, 1, correct_answer);
             },
             B: function() {
-                handleAnswer(this, 1, correct_answer);
-                start(this, spinner);
-                playJeopardy(this, state_products, stop);
+                waitForKeyDown = handleAnswer(this, 1, correct_answer);
             },
             c: function() {
-                handleAnswer(this, 2, correct_answer);
-                start(this, spinner);
-                playJeopardy(this, state_products, stop);
+                waitForKeyDown = handleAnswer(this, 2, correct_answer);
             },
             C: function() {
-                handleAnswer(this, 2, correct_answer);
-                start(this, spinner);
-                playJeopardy(this, state_products, stop);
+                waitForKeyDown = handleAnswer(this, 2, correct_answer);
             },
             play: function(product) {
                 state_products = [product];
@@ -225,7 +227,7 @@ $(function($, undefined) {
             }
         }, {
             name: 'cloud_jeopardy',
-            prompt: config_prompt,
+            prompt: config_prompt_paused,
             greetings: 'Welcome to Cloud Jeopardy!\n\n' +
                 'An AWS Certification study tool - select the correct question for the given AWS FAQ answer, Jeopardy style.\n',
             scrollOnEcho: true,
@@ -235,8 +237,18 @@ $(function($, undefined) {
                 callback([].concat(utils, products));
             },
             keydown: function(e) {
+                //this.echo("DEBUG: in keydown with waitForKeyDown = " + waitForKeyDown);
+
                 //disable keyboard when animating
                 if (animation) {
+                    return false;
+                }
+
+                if (waitForKeyDown) {
+                //    this.echo("DEBUG: waitForKeyDown <------");
+                    waitForKeyDown = false;
+                    start(this, spinner);
+                    playJeopardy(this, state_products, stop);
                     return false;
                 }
             }

@@ -10,7 +10,7 @@ def _get_hash(q, a):
 def parse_qnas(product, lines):
     date = datetime.now().isoformat()
     qna_list = QnaList(product_code=product.code, product_name=product.name, product_desc=product.desc,
-                       date=date, qnas_count=0, qnas=[])
+                       product_href=product.abs_href, date=date, qnas_count=0, qnas=[])
 
     if lines is None:
         # WARNING:root:FAQ page did not exist for page (or alternatives):

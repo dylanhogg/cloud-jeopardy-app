@@ -37,12 +37,12 @@ flake8:
 
 # AWS Command Tools
 
-## AWS S3 cp static_files to S3
-s3-deploy-server:
+## AWS S3 cp generated_files to S3 bucket
+s3-deploy-files:
 	aws s3 cp .generated_files s3://${ENV}-s3-${APP_NAME} --recursive --profile ${AWS_PROFILE}
 
-## AWS S3 rm static_files from S3
-s3-delete-server:
+## AWS S3 rm bucket
+s3-remove-files:
 	aws s3 rm s3://${ENV}-s3-${APP_NAME} --recursive
 
 ## Browse to public S3 url

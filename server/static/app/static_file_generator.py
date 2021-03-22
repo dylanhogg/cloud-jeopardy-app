@@ -41,12 +41,12 @@ def save_faq_text(crawler, product, output_path):
 
     qna_list = parser.parse_qnas(product, faq_text)
     qnas_json = qna_list.dict()
-    parsed_faq_text = json.dumps(qnas_json, indent=4)
+    parsed_faq_json = json.dumps(qnas_json, indent=4)
     filename = os.path.join(output_path, f"{product.code}-faq.json")
     data_error = len(qna_list.qnas) < 3
     if data_error:
         filename = filename.replace(".json", ".ERROR.json")
-    save(parsed_faq_text, filename)
+    save(parsed_faq_json, filename)
 
     return data_error
 
