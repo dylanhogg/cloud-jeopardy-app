@@ -201,7 +201,8 @@ $(function($, undefined) {
             name: 'cloud_jeopardy',
             prompt: config_prompt_paused,
             greetings: 'Welcome to Cloud Jeopardy!\n\n' +
-                'An AWS Certification study tool - select the correct question for the given AWS FAQ answer, Jeopardy style.\n',
+                'An AWS Certification study tool - select the correct question for the given AWS FAQ answer, Jeopardy style.\n\n' +
+                'Source available here: https://github.com/dylanhogg/cloud-jeopardy-app\n',
             scrollOnEcho: true,
             completion: function(command, callback) {
                 var utils = ['help', 'status', 'play', 'version'];
