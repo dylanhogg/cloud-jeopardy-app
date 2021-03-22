@@ -13,13 +13,16 @@
     1) X Randomise answer
     1) X No repeats in a single game
     1) X Ensure google analytics set up ok
+    1) X pause on load and answer
+    1) X link to faq page on wrong answer
+    1) remove debug info
     1) Move into cleaner, public repo with js client and s3 infra (maybe include ecs infra also?)
         1) Test static server app and tf
         1) Test dynamic server app and tf
         1) Test js client tf
         1) Write tests
-        1) Check github workflow ok
-    1) html metadata, desc, tags, graphql?
+        1) X Check github workflow ok
+    1) X html metadata, desc, tags, graphql?
     1) Set up cloudfront with https on app and api - https://channaly.medium.com/how-to-host-static-website-with-https-using-amazon-s3-251434490c59
     1) Ensure no repeats in a session
     1) Work out product sets for different certification paths
@@ -35,7 +38,7 @@
     1) Add favicon
     1) Test mobile safari
     1) Google speed: https://developers.google.com/speed/pagespeed/insights/?url=http%3A%2F%2Fjeopardy-app.infocruncher.com%2F
-    1)
+    1) Add cost explorer to TF (see: https://blog.ecrazytechnologies.com/optimize-with-aws-cost-explorer)
     
 1) Data
     1) Consolidate json data with publicdata.infocruncher.com? (what about monitoring tho?)

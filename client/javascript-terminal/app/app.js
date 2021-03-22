@@ -1,4 +1,4 @@
-var version = "Cloud Jeopardy v0.0.1";
+var version = "Cloud Jeopardy v0.0.2";
 var qna_data = null;
 var qna_data_count = 0;
 var data_ready = false;
@@ -23,24 +23,10 @@ var state_qnas = [];
 var box_top = "┌────────────────────────────────┐\n";
 // var box_ans = "│ Given the answer:              │\n";
 var box_qns = "│ What was the question?         │\n";
-var box_cor = "│ [[;white;]✓] Correct! You legend.         │\n";
-var box_wro = "│ [[;red;]𐄂] Wrong, sorry.                │\n";
+//var box_cor = "│ [[;white;]✓] Correct! You legend.         │\n";
+//var box_wro = "│ [[;red;]𐄂] Wrong, sorry.                │\n";
 var box_btm = "└────────────────────────────────┘";
 
-function randomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
-}
-
-function randomNumberExcluding(min, max, exclude) {
-    while (true) {
-        var rnd = Math.floor(Math.random() * (max - min) + min);
-        if (exclude.length == 0 || exclude.indexOf(rnd) === -1) {
-            return rnd;
-        }
-    }
-
-  return Math.floor(Math.random() * (max - min) + min);
-}
 
 function handleAnswer(term, answer, correct_answer) {
     if (correct_answer === null) {
@@ -48,31 +34,20 @@ function handleAnswer(term, answer, correct_answer) {
     } else if (answer === correct_answer) {
         state_correct++;
         state_total++;
-        term.echo(box_top + box_cor + box_btm);
-        // TODO: add correct streak
+        term.echo('[[;green;]✓] Correct! You legend.');
+        // TODO: add correct streak here
     } else {
         state_incorrect++;
         state_total++;
-        term.echo(box_top + box_wro + box_btm);
-        term.echo('Correct answer: ' + correct_answer_display  + '.');
-        // term.echo('More info: ' + state_product_href);
+        term.echo('[[;red;]𐄂] Wrong, answer was ' + correct_answer_display);
         term.echo(state_product_name + ' docs: ' + state_product_href);
 
     }
-    term.echo('Your score: ' + state_correct + ' of ' + state_total);
+    term.echo('Score: ' + state_correct + ' / ' + state_total);
     term.echo('');
 
     term.set_prompt(config_prompt_paused);
     return true;
-
-//    term.echo("DEBUG:");
-//    term.echo("state_qnas = " + state_qnas);
-
-//    term.echo('answer =          ' + answer);
-//    term.echo('correct_answer =  ' + correct_answer);
-//    term.echo('state_correct =   ' + state_correct);
-//    term.echo('state_incorrect = ' + state_incorrect);
-//    term.echo('state_total =     ' + state_total);
 }
 
 function _color(c) {
@@ -99,7 +74,6 @@ function playJeopardy(term, products, stopSpinningFn) {
 
         state_product_name = data["product_name"];
         state_product_href = data["product_href"];
-//        state_product_desc = data["product_desc"];
 
         qna_data = data["qnas"];
         qna_data_count = Object.keys(qna_data).length;
@@ -169,7 +143,7 @@ $(function($, undefined) {
             animation = true;
             i = 0;
             function set() {
-                var text = "loading " + spinner.frames[i++ % spinner.frames.length];
+                var text = spinner.frames[i++ % spinner.frames.length];
                 term.set_prompt(text);
             };
             prompt = term.get_prompt();
@@ -181,7 +155,6 @@ $(function($, undefined) {
         function stop(term) {
             setTimeout(function() {
                 clearInterval(timer);
-                // term.set_prompt(prompt);
                 term.set_prompt(config_prompt);
                 animation = false;
                 term.find('.cursor').show();
@@ -189,7 +162,6 @@ $(function($, undefined) {
         }
 
 //        $(function() {
-//            // state_product = "ecr";  // TODO: make array and select sensible set.
 //            var term = $.terminal.active()
 //            start(term, spinner);
 //            playJeopardy(term, state_products, stop);
@@ -237,15 +209,13 @@ $(function($, undefined) {
                 callback([].concat(utils, products));
             },
             keydown: function(e) {
-                //this.echo("DEBUG: in keydown with waitForKeyDown = " + waitForKeyDown);
-
-                //disable keyboard when animating
                 if (animation) {
+                    // Disable keyboard when animating
                     return false;
                 }
 
                 if (waitForKeyDown) {
-                //    this.echo("DEBUG: waitForKeyDown <------");
+                    // Handle wait for any key
                     waitForKeyDown = false;
                     start(this, spinner);
                     playJeopardy(this, state_products, stop);
