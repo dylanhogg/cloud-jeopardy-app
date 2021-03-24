@@ -180,16 +180,25 @@ $(function($, undefined) {
             A: function() {
                 waitForKeyDown = handleAnswer(this, 0, correct_answer);
             },
+            1: function() {
+                waitForKeyDown = handleAnswer(this, 0, correct_answer);
+            },
             b: function() {
                 waitForKeyDown = handleAnswer(this, 1, correct_answer);
             },
             B: function() {
                 waitForKeyDown = handleAnswer(this, 1, correct_answer);
             },
+            2: function() {
+                waitForKeyDown = handleAnswer(this, 1, correct_answer);
+            },
             c: function() {
                 waitForKeyDown = handleAnswer(this, 2, correct_answer);
             },
             C: function() {
+                waitForKeyDown = handleAnswer(this, 2, correct_answer);
+            },
+            3: function() {
                 waitForKeyDown = handleAnswer(this, 2, correct_answer);
             },
             play: function(product) {
