@@ -12,3 +12,10 @@ function randomNumberExcluding(min, max, exclude) {
 
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+function scroll_to_bottom() {
+    // TODO: try to fix some mobile device scrolling
+    var body = $("body");
+    var sHeight = body.prop("scrollHeight");
+    body.scrollTop(sHeight);
+}

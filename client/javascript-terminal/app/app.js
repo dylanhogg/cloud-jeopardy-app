@@ -5,6 +5,7 @@ var data_ready = false;
 var config_spinner_name = 'dots';
 var config_prompt = 'A, B or C? > ';
 var config_prompt_paused = '[press any key]';
+var config_prompt_products = 'Select a product set to learn:';
 
 var correct_answer = null;
 var correct_answer_display = null;
@@ -15,16 +16,21 @@ var state_products = ["s3", "ecr", "ecs", "ec2", "elasticache", "rds", "elasticm
                         "lambda", "sagemaker", "sagemakergroundtruth", "sns", "sqs", "vpc", "kinesis",
                         "directconnect", "cloudwatch", "cloudfront", "iam", "redshift", "athena", "efs",
                         "glue", "rdsaurora", "iot-core", "systems-manager", "eks", "cognito", "dynamodb"];
+
+var state_product_sets = {
+    "all": ["athena", "cloudfront", "cloudwatch", "cognito", "dynamodb","ec2", "ecr", "ecs", "efs","glue", "eks", "elasticache", "elasticmapreduce", "iam", "iot-core", "kinesis","directconnect", "rds", "rdsaurora", "redshift", "route53","lambda", "s3", "sagemaker", "sagemakergroundtruth", "sns", "sqs", "systems-manager", "vpc"],
+    "core": ["cloudfront", "cloudwatch", "directconnect", "ec2", "efs", "iam", "lambda", "route53", "s3", "systems-manager", "vpc"],
+    "data": ["dynamodb", "glue", "elasticache", "elasticmapreduce", "kinesis", "rds", "rdsaurora", "redshift", "s3"],
+    "ml": ["sagemaker", "sagemakergroundtruth"]
+}
+
 var state_correct = 0;
 var state_incorrect = 0;
 var state_total = 0;
 var state_qnas = [];
 
 var box_top = "┌────────────────────────────────┐\n";
-// var box_ans = "│ Given the answer:              │\n";
 var box_qns = "│ What was the question?         │\n";
-//var box_cor = "│ [[;white;]✓] Correct! You legend.         │\n";
-//var box_wro = "│ [[;red;]𐄂] Wrong, sorry.                │\n";
 var box_btm = "└────────────────────────────────┘";
 
 
@@ -35,18 +41,17 @@ function handleAnswer(term, answer, correct_answer) {
         state_correct++;
         state_total++;
         term.echo('[[;green;]✓] Correct! You legend.');
-        // TODO: add correct streak here
     } else {
         state_incorrect++;
         state_total++;
         term.echo('[[;red;]𐄂] Wrong, answer was ' + correct_answer_display);
         term.echo(state_product_name + ' docs: ' + state_product_href);
-
     }
     term.echo('Score: ' + state_correct + ' / ' + state_total);
     term.echo('');
 
     term.set_prompt(config_prompt_paused);
+    scroll_to_bottom();
     return true;
 }
 
@@ -161,60 +166,68 @@ $(function($, undefined) {
             }, 0);
         }
 
-//        $(function() {
-//            var term = $.terminal.active()
-//            start(term, spinner);
-//            playJeopardy(term, state_products, stop);
-//        });
+        var greeting = 'Welcome to Cloud Jeopardy!\n\n' +
+                       'An AWS Certification study tool - select the correct question for the given AWS FAQ answer, Jeopardy style.\n\n' +
+                       'Source available here: https://github.com/dylanhogg/cloud-jeopardy-app\n\n';
 
-        $('body').terminal({
-            help: function() {
-                this.echo('Try typing "play ec2", or "play ec" and then hitting tab twice to autocomplete.');
-            },
-            version: function() {
-                this.echo(version);
-            },
-            a: function() {
+        greeting += 'Which product set to play? TODO: this is in progress...\n';
+        var i = 0;
+        var alpha_list = ['A', 'B', 'C', 'D', 'E', 'F']; // TODO: more and common
+        for (var key in state_product_sets) {
+            greeting += alpha_list[i] + ': ' + key + '\n';
+            i += 1;
+        }
+
+        $('body').terminal(
+        function(line) {
+            arr = line.trim().toLowerCase().replace(/\s\s+/g, " ").split(" ");
+            cmd = arr[0];
+            args = arr.slice(1);
+
+            if (cmd == 'a' || cmd == '1') {
                 waitForKeyDown = handleAnswer(this, 0, correct_answer);
-            },
-            A: function() {
-                waitForKeyDown = handleAnswer(this, 0, correct_answer);
-            },
-            1: function() {
-                waitForKeyDown = handleAnswer(this, 0, correct_answer);
-            },
-            b: function() {
-                waitForKeyDown = handleAnswer(this, 1, correct_answer);
-            },
-            B: function() {
-                waitForKeyDown = handleAnswer(this, 1, correct_answer);
-            },
-            2: function() {
-                waitForKeyDown = handleAnswer(this, 1, correct_answer);
-            },
-            c: function() {
-                waitForKeyDown = handleAnswer(this, 2, correct_answer);
-            },
-            C: function() {
-                waitForKeyDown = handleAnswer(this, 2, correct_answer);
-            },
-            3: function() {
-                waitForKeyDown = handleAnswer(this, 2, correct_answer);
-            },
-            play: function(product) {
-                state_products = [product];
-                start(this, spinner);
-                playJeopardy(this, state_products, stop);
             }
-        }, {
+            else if (cmd == 'b' || cmd == '2') {
+                waitForKeyDown = handleAnswer(this, 1, correct_answer);
+            }
+            else if (cmd == 'c' || cmd == '1') {
+                waitForKeyDown = handleAnswer(this, 2, correct_answer);
+            }
+            else if (cmd == 'play') {
+                if (args.length === 0) {
+                    this.echo('Usage is play <product>; Try "play ec" and then hit tab twice for autocomplete.');
+                } else {
+                    product = args[0];
+                    state_products = [product];
+                    start(this, spinner);
+                    playJeopardy(this, state_products, stop);
+                }
+            }
+            else if (cmd == 'help') {
+                this.echo('Better help coming soon...:');
+                this.echo('  play <product> - Only show <product> questions; Try "play ec" and then hit tab twice for autocomplete.');
+                this.echo('  about - About this app.');
+                this.echo('  help - This message.');
+            }
+            else if (cmd == 'about' || cmd == 'credits') {
+                this.echo('For source code and all about this app see: https://github.com/dylanhogg/cloud-jeopardy-app');
+            }
+            else if (cmd == '') {
+                // pass
+                scroll_to_bottom();
+            }
+            else {
+                this.echo('Unknown command: ' + cmd);
+            }
+        },
+        {
             name: 'cloud_jeopardy',
-            prompt: config_prompt_paused,
-            greetings: 'Welcome to Cloud Jeopardy!\n\n' +
-                'An AWS Certification study tool - select the correct question for the given AWS FAQ answer, Jeopardy style.\n\n' +
-                'Source available here: https://github.com/dylanhogg/cloud-jeopardy-app\n',
+            prompt: config_prompt_products,
+            greetings: greeting,
             scrollOnEcho: true,
             completion: function(command, callback) {
                 var utils = ['help', 'status', 'play', 'version'];
+                // TODO: review this full list, where used?
                 var products = ['amazon-mq','amplify','api-gateway','app-mesh','app2container','appflow','application-discovery','appstream2','appsync','athena','audit-manager','augmented-ai','autoscaling','aws-transfer-family','backup','batch','braket','cdk','certificate-manager','chatbot','chime','cloud9','cloudformation','cloudfront','cloudhsm','cloudsearch','cloudshell','cloudtrail','cloudwatch','codebuild','codecommit','codedeploy','codeguru','codepipeline','codestar','cognito','comprehend','compute-optimizer','config','connect','console','consolemobile','containerscopilot','corretto','datapipeline','datasync','deepcomposer','deeplens','deepracer','detective','device-farm','devops-guru','directconnect','directoryservice','dms','documentdb','dynamodb','ebs','ec2','ec2autoscaling','ecr','ecs','efs','eks','ekseks-anywhere','ekseks-distro','elasticache','elasticbeanstalk','elasticloadbalancing','elasticmapreduce','elasticsearch-service','elastictranscoder','eventbridge','fargate','fis','forecast','fraud-detector','freertos','fsxlustre','fsxwindows','gamelift','global-accelerator','glue','grafana','ground-station','guardduty','iam','iot-analytics','iot-core','iot-device-defender','iot-device-management','iot-events','iot-sitewise','iot-things-graph','kendra','keyspaces','kinesis','kinesisvideo-streams','kms','lake-formation','lambda','lex','license-manager','lightsail','location','lookout-for-equipment','lookout-for-metrics','lookout-for-vision','lumberyard','machine-learningcontainers','macie','managed-blockchain','managed-workflows-for-apache-airflow','migration-evaluator','migration-hub','monitron','msk','neptune','network-firewall','opsworks','organizations','otel','outposts','panorama','personalize','pinpoint','polly','privatelink','prometheus','proton','qldb','quicksight','ram','rds','rdsaurora','rdsvmware','redshift','rekognition','robomaker','route53','s3','sagemaker','sagemakergroundtruth','security-hub','server-migration-service','servicecatalog','ses','shield','snow','sns','sqs','step-functions','storagegateway','sumerian','systems-manager','textract','timestream','transcribe','transit-gateway','translate','vpc','well-architected-tool','workdocs','worklink','workmail','workspaces','xray'];
                 callback([].concat(utils, products));
             },
