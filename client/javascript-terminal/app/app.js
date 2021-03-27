@@ -1,4 +1,4 @@
-var version = "Cloud Jeopardy v0.0.3";
+var version = "Cloud Jeopardy v0.0.4";
 var qna_data = null;
 var qna_data_count = 0;
 var data_ready = false;

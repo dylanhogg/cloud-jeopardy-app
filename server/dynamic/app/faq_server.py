@@ -27,7 +27,7 @@ def get_qnas():
 
 @app.get("/version")
 def get_qnas():
-    return {"version": "v0.0.3"}
+    return {"version": "v0.0.4"}
 
 
 @app.get("/get_qnas")
