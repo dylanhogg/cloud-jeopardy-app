@@ -74,7 +74,7 @@ function playJeopardy(term, products, stopSpinningFn) {
       url: data_url,
       cache: false,
       success: function(data) {
-        stopSpinningFn(term);
+        stopSpinningFn(term, 'playing');
 
         state_product_name = data["product_name"];
         state_product_href = data["product_href"];
@@ -127,7 +127,7 @@ function playJeopardy(term, products, stopSpinningFn) {
       error: function(data) {
         console.log('ajax error');
         console.log(data);
-        stopSpinningFn(term);
+        stopSpinningFn(term, 'playing');  // TOOD: maybe next mode should be wait_for_key?
         term.echo("Sorry, my bad :( Ajax error: " + data.status + " " + data.statusText + " for url: " + data_url);
       },
     });
@@ -136,15 +136,14 @@ function playJeopardy(term, products, stopSpinningFn) {
 $(function($, undefined) {
     var spinners_url = 'spinners.json';
     $.getJSON(spinners_url, function(spinners) {
-        var animation = false;
-        var mode = 'select_products'; // select_products, wait_for_key, playing
         var timer;
         var prompt;
         var i;
         var spinner = spinners[config_spinner_name];
+        var mode = 'select_products';  // {select_products, wait_for_key, playing, animation}
 
         function start(term, spinner) {
-            animation = true;
+            mode = 'animation';
             i = 0;
             function set() {
                 var text = spinner.frames[i++ % spinner.frames.length];
@@ -156,11 +155,11 @@ $(function($, undefined) {
             timer = setInterval(set, spinner.interval);
         }
 
-        function stop(term) {
+        function stop(term, next_mode) {
             setTimeout(function() {
                 clearInterval(timer);
                 term.set_prompt(config_prompt);
-                animation = false;
+                mode = next_mode;
                 term.find('.cursor').show();
             }, 0);
         }
@@ -234,8 +233,9 @@ $(function($, undefined) {
                 callback([].concat(utils, products));
             },
             keydown: function(e) {
-                if (animation) {
+                if (mode === 'animation') {
                     // Disable keyboard when animating
+                    // The stop callback fn updates mode once loading complete
                     return false;
                 }
 
