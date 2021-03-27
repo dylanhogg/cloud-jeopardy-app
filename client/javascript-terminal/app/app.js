@@ -52,7 +52,6 @@ function handleAnswer(term, answer, correct_answer) {
 
     term.set_prompt(config_prompt_paused);
     scroll_to_bottom();
-    return true;
 }
 
 function _color(c) {
@@ -138,7 +137,7 @@ $(function($, undefined) {
     var spinners_url = 'spinners.json';
     $.getJSON(spinners_url, function(spinners) {
         var animation = false;
-        var waitForKeyDown = true;
+        var mode = 'select_products'; // select_products, wait_for_key, playing
         var timer;
         var prompt;
         var i;
@@ -185,13 +184,16 @@ $(function($, undefined) {
             args = arr.slice(1);
 
             if (cmd == 'a' || cmd == '1') {
-                waitForKeyDown = handleAnswer(this, 0, correct_answer);
+                handleAnswer(this, 0, correct_answer);
+                mode = 'wait_for_key';
             }
             else if (cmd == 'b' || cmd == '2') {
-                waitForKeyDown = handleAnswer(this, 1, correct_answer);
+                handleAnswer(this, 1, correct_answer);
+                mode = 'wait_for_key';
             }
             else if (cmd == 'c' || cmd == '1') {
-                waitForKeyDown = handleAnswer(this, 2, correct_answer);
+                handleAnswer(this, 2, correct_answer);
+                mode = 'wait_for_key';
             }
             else if (cmd == 'play') {
                 if (args.length === 0) {
@@ -237,9 +239,8 @@ $(function($, undefined) {
                     return false;
                 }
 
-                if (waitForKeyDown) {
-                    // Handle wait for any key
-                    waitForKeyDown = false;
+                if (mode === 'wait_for_key') {
+                    mode = 'playing'
                     start(this, spinner);
                     playJeopardy(this, state_products, stop);
                     return false;
