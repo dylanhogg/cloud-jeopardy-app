@@ -8,7 +8,7 @@
 The show features a quiz competition in which contestants are presented with general knowledge clues in the form of answers, 
 and must phrase their responses in the form of questions.
 
-[CloudJeopardy!](https://github.com/dylanhogg/cloud-jeopardy-app) is an app created by Dylan Hogg in which users are 
+[Cloud Jeopardy!](https://github.com/dylanhogg/cloud-jeopardy-app) is an app created by Dylan Hogg in which users are 
 presented with an AWS cloud FAQ answer and must choose the correct corresponding FAQ question.
 
 ## Application

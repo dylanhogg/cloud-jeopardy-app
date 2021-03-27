@@ -5,23 +5,19 @@ var data_ready = false;
 var config_spinner_name = 'dots';
 var config_prompt = 'A, B or C? > ';
 var config_prompt_paused = '[press any key]';
-var config_prompt_products = 'Select a product set to learn:';
+var config_prompt_products = 'Select a product set to learn: ';
 
 var correct_answer = null;
 var correct_answer_display = null;
-var state_product = null;
 var state_product_name = null;
 var state_product_href = null;
-var state_products = ["s3", "ecr", "ecs", "ec2", "elasticache", "rds", "elasticmapreduce", "route53",
-                        "lambda", "sagemaker", "sagemakergroundtruth", "sns", "sqs", "vpc", "kinesis",
-                        "directconnect", "cloudwatch", "cloudfront", "iam", "redshift", "athena", "efs",
-                        "glue", "rdsaurora", "iot-core", "systems-manager", "eks", "cognito", "dynamodb"];
+var state_products = null;
 
 var state_product_sets = {
-    "all": ["athena", "cloudfront", "cloudwatch", "cognito", "dynamodb","ec2", "ecr", "ecs", "efs","glue", "eks", "elasticache", "elasticmapreduce", "iam", "iot-core", "kinesis","directconnect", "rds", "rdsaurora", "redshift", "route53","lambda", "s3", "sagemaker", "sagemakergroundtruth", "sns", "sqs", "systems-manager", "vpc"],
-    "core": ["cloudfront", "cloudwatch", "directconnect", "ec2", "efs", "iam", "lambda", "route53", "s3", "systems-manager", "vpc"],
-    "data": ["dynamodb", "glue", "elasticache", "elasticmapreduce", "kinesis", "rds", "rdsaurora", "redshift", "s3"],
-    "ml": ["sagemaker", "sagemakergroundtruth"]
+    "All products": ["athena", "cloudfront", "cloudwatch", "cognito", "dynamodb","ec2", "ecr", "ecs", "efs", "glue", "eks", "elasticache", "elasticmapreduce", "iam", "iot-core", "kinesis", "directconnect", "rds", "rdsaurora", "redshift", "route53", "lambda", "s3", "sagemaker", "sagemakergroundtruth", "sns", "sqs", "systems-manager", "vpc"],
+    "Core only": ["cloudfront", "cloudwatch", "directconnect", "ec2", "efs", "iam", "lambda", "route53", "s3", "systems-manager", "vpc"],
+    "Data only": ["athena", "dynamodb", "eks", "glue", "elasticache", "elasticmapreduce", "kinesis", "rds", "rdsaurora", "redshift", "s3"],
+    "Machine Learning only": ["sagemaker", "sagemakergroundtruth", "elasticmapreduce"]
 }
 
 var state_correct = 0;
@@ -68,6 +64,12 @@ function playJeopardy(term, products, stopSpinningFn) {
     product_idx = randomNumber(0, products.length);
     product = products[product_idx];
     data_url = "https://prd-s3-cloud-jeopardy-api.s3.amazonaws.com/faqs/" + product + "-faq.json";
+
+//    if (product === null || product.strip() === '') {
+//        term.echo('product cannot be empty.');
+//        stopSpinningFn(term, 'playing');
+//        return;
+//    }
 
     $.ajax({
       type: "GET",
@@ -168,7 +170,7 @@ $(function($, undefined) {
                        'An AWS Certification study tool - select the correct question for the given AWS FAQ answer, Jeopardy style.\n\n' +
                        'Source available here: https://github.com/dylanhogg/cloud-jeopardy-app\n\n';
 
-        greeting += 'Which product set to play? TODO: this is in progress...\n';
+        greeting += 'Which product set to play?\n';
         var i = 0;
         var alpha_list = ['A', 'B', 'C', 'D', 'E', 'F']; // TODO: more and common
         for (var key in state_product_sets) {
@@ -183,16 +185,46 @@ $(function($, undefined) {
             args = arr.slice(1);
 
             if (cmd == 'a' || cmd == '1') {
-                handleAnswer(this, 0, correct_answer);
-                mode = 'wait_for_key';
+                if (mode == 'playing') {
+                    handleAnswer(this, 0, correct_answer);
+                    mode = 'wait_for_key';
+                }
+                else if (mode == 'select_products') {
+                    state_products = state_product_sets[Object.keys(state_product_sets)[0]];
+                    this.echo("\nGood choice. This game will test you on these AWS products:\n\n" + state_products.join(", ") + "\n");
+                    start(this, spinner);
+                    playJeopardy(this, state_products, stop);
+                }
             }
             else if (cmd == 'b' || cmd == '2') {
-                handleAnswer(this, 1, correct_answer);
-                mode = 'wait_for_key';
+                if (mode == 'playing') {
+                    handleAnswer(this, 1, correct_answer);
+                    mode = 'wait_for_key';
+                }
+                else if (mode == 'select_products') {
+                    state_products = state_product_sets[Object.keys(state_product_sets)[1]];
+                    this.echo("\nGood choice. This game will test you on these AWS products:\n\n" + state_products.join(", ") + "\n");
+                    start(this, spinner);
+                    playJeopardy(this, state_products, stop);
+                }
             }
-            else if (cmd == 'c' || cmd == '1') {
-                handleAnswer(this, 2, correct_answer);
-                mode = 'wait_for_key';
+            else if (cmd == 'c' || cmd == '3') {
+                if (mode == 'playing') {
+                    handleAnswer(this, 2, correct_answer);
+                    mode = 'wait_for_key';
+                }
+                else if (mode == 'select_products') {
+                    state_products = state_product_sets[Object.keys(state_product_sets)[2]];
+                    this.echo("\nGood choice. This game will test you on these AWS products:\n\n" + state_products.join(", ") + "\n");
+                    start(this, spinner);
+                    playJeopardy(this, state_products, stop);
+                }
+            }
+            else if (mode == 'select_products' && (cmd == 'd' || cmd == '4')) {
+                state_products = state_product_sets[Object.keys(state_product_sets)[3]];
+                this.echo("\nGood choice. This game will test you on these AWS products:\n\n" + state_products.join(", ") + "\n");
+                start(this, spinner);
+                playJeopardy(this, state_products, stop);
             }
             else if (cmd == 'play') {
                 if (args.length === 0) {
@@ -203,6 +235,9 @@ $(function($, undefined) {
                     start(this, spinner);
                     playJeopardy(this, state_products, stop);
                 }
+            }
+            else if (cmd == 'products') {
+                this.echo('Products in play: ' + state_products);
             }
             else if (cmd == 'help') {
                 this.echo('Better help coming soon...:');
@@ -227,10 +262,10 @@ $(function($, undefined) {
             greetings: greeting,
             scrollOnEcho: true,
             completion: function(command, callback) {
+                // Auto complete commands
                 var utils = ['help', 'status', 'play', 'version'];
-                // TODO: review this full list, where used?
-                var products = ['amazon-mq','amplify','api-gateway','app-mesh','app2container','appflow','application-discovery','appstream2','appsync','athena','audit-manager','augmented-ai','autoscaling','aws-transfer-family','backup','batch','braket','cdk','certificate-manager','chatbot','chime','cloud9','cloudformation','cloudfront','cloudhsm','cloudsearch','cloudshell','cloudtrail','cloudwatch','codebuild','codecommit','codedeploy','codeguru','codepipeline','codestar','cognito','comprehend','compute-optimizer','config','connect','console','consolemobile','containerscopilot','corretto','datapipeline','datasync','deepcomposer','deeplens','deepracer','detective','device-farm','devops-guru','directconnect','directoryservice','dms','documentdb','dynamodb','ebs','ec2','ec2autoscaling','ecr','ecs','efs','eks','ekseks-anywhere','ekseks-distro','elasticache','elasticbeanstalk','elasticloadbalancing','elasticmapreduce','elasticsearch-service','elastictranscoder','eventbridge','fargate','fis','forecast','fraud-detector','freertos','fsxlustre','fsxwindows','gamelift','global-accelerator','glue','grafana','ground-station','guardduty','iam','iot-analytics','iot-core','iot-device-defender','iot-device-management','iot-events','iot-sitewise','iot-things-graph','kendra','keyspaces','kinesis','kinesisvideo-streams','kms','lake-formation','lambda','lex','license-manager','lightsail','location','lookout-for-equipment','lookout-for-metrics','lookout-for-vision','lumberyard','machine-learningcontainers','macie','managed-blockchain','managed-workflows-for-apache-airflow','migration-evaluator','migration-hub','monitron','msk','neptune','network-firewall','opsworks','organizations','otel','outposts','panorama','personalize','pinpoint','polly','privatelink','prometheus','proton','qldb','quicksight','ram','rds','rdsaurora','rdsvmware','redshift','rekognition','robomaker','route53','s3','sagemaker','sagemakergroundtruth','security-hub','server-migration-service','servicecatalog','ses','shield','snow','sns','sqs','step-functions','storagegateway','sumerian','systems-manager','textract','timestream','transcribe','transit-gateway','translate','vpc','well-architected-tool','workdocs','worklink','workmail','workspaces','xray'];
-                callback([].concat(utils, products));
+                var all_products = state_product_sets[Object.keys(state_product_sets)[0]];
+                callback([].concat(utils, all_products));
             },
             keydown: function(e) {
                 if (mode === 'animation') {
