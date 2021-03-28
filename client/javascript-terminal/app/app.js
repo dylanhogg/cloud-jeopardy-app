@@ -1,4 +1,4 @@
-var version = "Cloud Jeopardy v0.0.4";
+var version = "v0.0.4";
 var qna_data = null;
 var qna_data_count = 0;
 var data_ready = false;
@@ -190,6 +190,7 @@ $(function($, undefined) {
                     mode = 'wait_for_key';
                 }
                 else if (mode == 'select_products') {
+                    // TODO: refactor the select_products handlers and make nicer UI...
                     state_products = state_product_sets[Object.keys(state_product_sets)[0]];
                     this.echo("\nGood choice. This game will test you on these AWS products:\n\n" + state_products.join(", ") + "\n");
                     start(this, spinner);
@@ -240,13 +241,13 @@ $(function($, undefined) {
                 this.echo('Products in play: ' + state_products);
             }
             else if (cmd == 'help') {
-                this.echo('Better help coming soon...:');
                 this.echo('  play <product> - Only show <product> questions; Try "play ec" and then hit tab twice for autocomplete.');
                 this.echo('  about - About this app.');
                 this.echo('  help - This message.');
             }
             else if (cmd == 'about' || cmd == 'credits') {
-                this.echo('For source code and all about this app see: https://github.com/dylanhogg/cloud-jeopardy-app');
+                this.echo('Cloud Jeopardy ' + version);
+                this.echo('\nFor source code and all about this app see: https://github.com/dylanhogg/cloud-jeopardy-app\n');
             }
             else if (cmd == '') {
                 // pass
@@ -263,7 +264,7 @@ $(function($, undefined) {
             scrollOnEcho: true,
             completion: function(command, callback) {
                 // Auto complete commands
-                var utils = ['help', 'status', 'play', 'version'];
+                var utils = ['help', 'play', 'about'];
                 var all_products = state_product_sets[Object.keys(state_product_sets)[0]];
                 callback([].concat(utils, all_products));
             },
