@@ -4,7 +4,6 @@ resource "aws_s3_bucket" "s3_bucket" {
   acl    = "public-read"
 
   // routing_rules
-
   website {
     index_document = "app.html"
     error_document = "error.html"
@@ -13,8 +12,7 @@ resource "aws_s3_bucket" "s3_bucket" {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["GET"]
-    // allowed_origins = ["https://s3-website-test.hashicorp.com"]
-    allowed_origins = ["*"]  // TODO: review
+    allowed_origins = ["*"]
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }
@@ -49,13 +47,3 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
 }
 POLICY
 }
-
-# AWS S3 bucket for www-redirect
-//resource "aws_s3_bucket" "website_redirect" {
-//  bucket = "www.${var.website_bucket_name}"
-//  acl = "public-read"
-//
-//  website {
-//    redirect_all_requests_to = "${var.website_bucket_name}"
-//  }
-//}
