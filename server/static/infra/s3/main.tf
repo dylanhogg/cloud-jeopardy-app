@@ -1,45 +1,11 @@
-//resource "aws_s3_bucket" "b" {
-//  bucket = "${var.app_name}_s3_api"
-//  acl    = "public-read"
-//  policy = file("policy.json")
-//
-//  website {
-//    index_document = "index.html"
-//    error_document = "error.html"
-//
-//    routing_rules = <<EOF
-//[{
-//    "Condition": {
-//        "KeyPrefixEquals": "docs/"
-//    },
-//    "Redirect": {
-//        "ReplaceKeyPrefixWith": "documents/"
-//    }
-//}]
-//EOF
-//  }
-//}
-
-# AWS S3 bucket for www-redirect
-//resource "aws_s3_bucket" "website_redirect" {
-//  bucket = "www.${var.website_bucket_name}"
-//  acl = "public-read"
-//
-//  website {
-//    redirect_all_requests_to = "${var.website_bucket_name}"
-//  }
-//}
-
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket#static-website-hosting
 
 resource "aws_s3_bucket" "s3_bucket" {
   // Bucket name must be unique and must not contain spaces, uppercase letters or underscores.
-  //bucket = "${var.app_name}-${var.env}-s3-api"
   bucket = "${var.env}-s3-${var.app_name}"
   acl    = "public-read"
 
   // routing_rules
-
   website {
     index_document = "index.html"
     error_document = "error.html"
@@ -48,8 +14,7 @@ resource "aws_s3_bucket" "s3_bucket" {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["GET"]
-    // allowed_origins = ["https://s3-website-test.hashicorp.com"]
-    allowed_origins = ["*"]  // TODO: review
+    allowed_origins = ["*"]
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }
