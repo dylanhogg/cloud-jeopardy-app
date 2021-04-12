@@ -11,11 +11,17 @@ and must phrase their responses in the form of questions.
 [Cloud Jeopardy!](https://github.com/dylanhogg/cloud-jeopardy-app) is an app created by Dylan Hogg in which users are 
 presented with an AWS cloud FAQ answer and must choose the correct corresponding FAQ question.
 
-## Application
+## Live Interactive Application
 
 Deployed here: [http://jeopardy-app.infocruncher.com/](http://jeopardy-app.infocruncher.com/)  
 
 The server and client components are also available for you to deploy this app also using terraform and aws.
+
+
+## Application Demo
+
+![demo](docs/cloud-jeopardy-demo.gif)
+
 
 ## Components
 
