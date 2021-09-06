@@ -5,7 +5,10 @@ resource "aws_s3_bucket" "s3_bucket" {
   bucket = "${var.env}-s3-${var.app_name}"
   acl    = "public-read"
 
-  // routing_rules
+  versioning {
+    enabled = true
+  }
+
   website {
     index_document = "index.html"
     error_document = "error.html"
